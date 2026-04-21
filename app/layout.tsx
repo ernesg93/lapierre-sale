@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { siteConfig } from "@/src/config/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,8 +14,38 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Lapierre Híbrida Carbono | Venta Exclusiva",
-  description: "Oportunidad única: Lapierre con cuadro de carbono, Shimano GRX y ruedas DT Swiss. Menos de 500km de uso. Pruebala y llevala hoy mismo.",
+  title: siteConfig.title,
+  description: siteConfig.description,
+  metadataBase: new URL(siteConfig.url),
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    url: siteConfig.url,
+    title: siteConfig.title,
+    description: siteConfig.description,
+    images: [
+      {
+        url: siteConfig.ogImage,
+        width: 1024,
+        height: 1024,
+        alt: siteConfig.name,
+      },
+    ],
+    locale: "es_AR",
+    siteName: siteConfig.name,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.title,
+    description: siteConfig.description,
+    images: [siteConfig.ogImage],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({

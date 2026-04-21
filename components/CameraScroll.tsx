@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { useScroll, useTransform, motion } from "framer-motion";
+import { whatsappUrl, siteConfig } from "@/src/config/site";
 
 export default function CameraScroll() {
   const [framesUrls, setFramesUrls] = useState<string[]>([]);
@@ -94,8 +95,7 @@ export default function CameraScroll() {
   return <CameraScrollContent loadedImages={loadedImages} />;
 }
 
-// Formato internacional sin '+' (Ej: código de país + número)
-const WHATSAPP_NUMBER = "5356793586";
+// WhatsApp URL generada desde siteConfig centralizado
 
 // Componente separado para que useScroll siempre encuentre su target ref montado en el DOM
 function CameraScrollContent({ loadedImages }: { loadedImages: HTMLImageElement[] }) {
@@ -255,9 +255,10 @@ function CameraScrollContent({ loadedImages }: { loadedImages: HTMLImageElement[
         >
           <div className="backdrop-blur-md bg-white/80 p-8 rounded-2xl shadow-md border border-slate-200 pointer-events-auto flex flex-col sm:flex-row gap-4">
             <a 
-              href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hola,%20tengo%20interés%20en%20la%20Lapierre.`}
+              href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
+              aria-label={`Contactar por WhatsApp sobre la ${siteConfig.name}`}
               className="px-8 py-4 bg-[#A855F7] hover:bg-[#9333EA] text-white rounded-full font-semibold transition-all hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-[#A855F7]/30"
             >
               Contactar por WhatsApp
