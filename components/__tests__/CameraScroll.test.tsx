@@ -2,7 +2,7 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { useScroll, useTransform } from 'framer-motion';
-import CameraScroll from '../CameraScroll';
+import CameraScroll, { calculateImageDrawProps } from '../CameraScroll';
 
 // Mocking framer-motion
 vi.mock('framer-motion', async () => {
@@ -110,5 +110,17 @@ describe('CameraScroll Component', () => {
     expect(screen.getByText(/Cuadro carbono/)).toBeInTheDocument();
     expect(screen.getByText(/Mantenimiento al día/)).toBeInTheDocument();
     expect(screen.getByText('Contactar por WhatsApp')).toBeInTheDocument();
+  });
+
+  it('calculates vertical offset for portrait aspect ratio (mobile)', () => {
+    const canvasWidth = 400;
+    const canvasHeight = 800; // Portrait
+    const imgWidth = 1000;
+    const imgHeight = 600; // Landscape bike
+    
+    const props = calculateImageDrawProps(canvasWidth, canvasHeight, imgWidth, imgHeight);
+    
+    // On mobile (portrait), we expect yOffset to be defined and positive
+    expect(props.yOffset).toBeGreaterThan(0);
   });
 });
