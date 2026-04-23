@@ -15,6 +15,10 @@
 
 ### Content Rendering
 - Once progress reaches 100%, it MUST render the `CameraScrollContent`.
+- The scrollytelling sequence MUST be responsive to different screen aspect ratios.
+- On desktop (landscape), the bike image MUST be centered.
+- On mobile (portrait), the bike image MUST be offset downwards by ~15-20% to leave space for narrative text at the top.
+- Narrative overlays MUST be positioned to avoid overlapping with the bike frame on mobile.
 - Overlays (Narrative blocks) MUST be visible at specific scroll points:
     - 0-15%: "Lapierre Híbrida Carbono"
     - 25-45%: Tech summary (Cuadro carbono, etc.)
@@ -36,3 +40,9 @@
 **Given** loading is complete (100%)
 **And** scroll progress is 0.05 (5%)
 **Then** the first overlay "Lapierre Híbrida Carbono" MUST be visible
+
+### Scenario 4: Mobile Framing
+**Given** loading is complete (100%)
+**And** the screen is in portrait orientation (mobile)
+**Then** the bike image MUST be drawn with a vertical offset shifting it downwards.
+**And** narrative overlays MUST be aligned to the top (`justify-start`) of the screen.

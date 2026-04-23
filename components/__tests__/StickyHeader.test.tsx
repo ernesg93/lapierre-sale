@@ -1,8 +1,14 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { useScroll } from 'framer-motion';
+import { useScroll, useTransform } from 'framer-motion';
 import StickyHeader from '../StickyHeader';
+import useActiveSection from '../../hooks/useActiveSection';
+
+// Mocking useActiveSection
+vi.mock('../../hooks/useActiveSection', () => ({
+  default: vi.fn(),
+}));
 
 // Mocking framer-motion
 vi.mock('framer-motion', async () => {
@@ -13,7 +19,19 @@ vi.mock('framer-motion', async () => {
     useTransform: vi.fn(),
     motion: {
       nav: ({ children, style, className }: any) => <nav style={style} className={className}>{children}</nav>,
+      div: ({ children, style, className, "data-testid": testId }: any) => (
+        <div style={style} className={className} data-testid={testId}>{children}</div>
+      ),
+      a: ({ children, style, className, href }: any) => (
+        <a href={href} style={style} className={className}>{children}</a>
+      ),
+      span: ({ children, style, className }: any) => (
+        <span style={style} className={className}>{children}</span>
+      ),
     },
+    useScroll: vi.fn(),
+    useTransform: vi.fn(),
+    AnimatePresence: ({ children }: any) => <>{children}</>,
   };
 });
 
@@ -27,7 +45,41 @@ describe('StickyHeader Component', () => {
         get: vi.fn(() => 0),
         on: vi.fn(() => vi.fn()),
       },
+      scrollYProgress: {
+        get: vi.fn(() => 0),
+        on: vi.fn(() => vi.fn()),
+      }
     } as any);
+
+    // Mock useTransform to return the output values
+    vi.mocked(vi.mocked(useTransform)).mockImplementation((value, input, output) => output[0]);
+
+    // Default mock for useActiveSection
+    vi.mocked(useActiveSection).mockReturnValue(null);
+  });
+
+  it('highlights the active section link', () => {
+    vi.mocked(useActiveSection).mockReturnValue('specs');
+    render(<StickyHeader />);
+    
+    const specsLink = screen.getByText(/Ficha Técnica/i);
+    // Check for a specific class or style that indicates active state
+    // In our implementation we'll use a specific color or underline
+    expect(specsLink).toHaveClass('text-[#A855F7]');
+  });
+
+  it('renders a progress bar', () => {
+    render(<StickyHeader />);
+    expect(screen.getByTestId('progress-bar')).toBeInTheDocument();
+  });
+
+  it('shows the price when scrolling deep (mocked visible)', () => {
+    // We'll mock the hook/state that controls this in the component implementation
+    // For now, we just expect the price from siteConfig to be present in the component
+    render(<StickyHeader />);
+    // Note: It might not be visible initially, but we check if it's in the DOM
+    // or we can mock the scroll state to be deep.
+    expect(screen.getByText(/€ 3.200/)).toBeInTheDocument();
   });
 
   it('is not visible initially (at scroll 0)', () => {

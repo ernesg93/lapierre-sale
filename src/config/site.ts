@@ -7,6 +7,9 @@ export const siteConfig = {
   /** Número de WhatsApp en formato internacional sin '+' ni espacios */
   whatsappNumber: "5356793586",
 
+  /** Precio de venta para mostrar en el header */
+  price: "€ 3.200",
+
   /** Mensaje pre-cargado en WhatsApp al hacer click */
   whatsappMessage: "Hola,%20tengo%20interés%20en%20la%20Lapierre.",
 
