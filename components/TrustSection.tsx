@@ -15,12 +15,12 @@ const badges: Badge[] = [
 
 export default function TrustSection() {
   return (
-    <section id="trust" className="py-24 bg-white w-full border-t border-slate-100">
+    <section id="trust" className="py-24 md:py-32 bg-white w-full border-t border-slate-100">
       <div className="max-w-6xl mx-auto px-6">
         <div className="grid md:grid-cols-2 gap-16 items-center">
           
           <div>
-            <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-6 tracking-tight">
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 tracking-tight">
               Compra con <span className="text-[#A855F7]">Confianza</span>
             </h2>
             <p className="text-lg text-slate-600 mb-8 leading-relaxed">

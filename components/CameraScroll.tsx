@@ -95,6 +95,30 @@ export default function CameraScroll() {
   return <CameraScrollContent loadedImages={loadedImages} />;
 }
 
+export function calculateImageDrawProps(canvasWidth: number, canvasHeight: number, imgWidth: number, imgHeight: number) {
+  const canvasRatio = canvasWidth / canvasHeight;
+  const imgRatio = imgWidth / imgHeight;
+  let drawWidth, drawHeight, offsetX, offsetY;
+
+  if (imgRatio > canvasRatio) {
+    drawWidth = canvasWidth;
+    drawHeight = canvasWidth / imgRatio;
+    offsetX = 0;
+    offsetY = (canvasHeight - drawHeight) / 2;
+  } else {
+    drawHeight = canvasHeight;
+    drawWidth = canvasHeight * imgRatio;
+    offsetX = (canvasWidth - drawWidth) / 2;
+    offsetY = 0;
+  }
+
+  // Ajuste para mobile: si es portrait, desplazamos hacia abajo
+  const isMobile = canvasWidth < canvasHeight;
+  const yOffset = isMobile ? canvasHeight * 0.18 : 0;
+
+  return { drawWidth, drawHeight, offsetX, offsetY, yOffset };
+}
+
 // WhatsApp URL generada desde siteConfig centralizado
 
 // Componente separado para que useScroll siempre encuentre su target ref montado en el DOM
@@ -134,25 +158,15 @@ function CameraScrollContent({ loadedImages }: { loadedImages: HTMLImageElement[
 
       const img = loadedImages[frameIndex];
       if (img) {
-        // Draw Image object contain
-        const canvasRatio = rect.width / rect.height;
-        const imgRatio = img.width / img.height;
-        let drawWidth, drawHeight, offsetX, offsetY;
-
-        if (imgRatio > canvasRatio) {
-          drawWidth = rect.width;
-          drawHeight = rect.width / imgRatio;
-          offsetX = 0;
-          offsetY = (rect.height - drawHeight) / 2;
-        } else {
-          drawHeight = rect.height;
-          drawWidth = rect.height * imgRatio;
-          offsetX = (rect.width - drawWidth) / 2;
-          offsetY = 0;
-        }
+        const { drawWidth, drawHeight, offsetX, offsetY, yOffset } = calculateImageDrawProps(
+          rect.width,
+          rect.height,
+          img.width,
+          img.height
+        );
 
         ctx.clearRect(0, 0, rect.width, rect.height);
-        ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+        ctx.drawImage(img, offsetX, offsetY + yOffset, drawWidth, drawHeight);
       }
     };
 
@@ -203,7 +217,7 @@ function CameraScrollContent({ loadedImages }: { loadedImages: HTMLImageElement[
         {/* OVERLAY 1: 0% - 15% */}
         <motion.div 
           style={{ opacity: op1, y: y1 }}
-          className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center p-6 text-center"
+          className="pointer-events-none absolute inset-0 flex flex-col items-center justify-start md:justify-center pt-24 md:pt-0 p-6 text-center"
         >
           <div className="backdrop-blur-md bg-white/70 p-8 rounded-2xl shadow-sm border border-slate-200 max-w-xl">
             <h1 className="text-4xl md:text-6xl font-bold text-slate-900 tracking-tight mb-4 select-none">
@@ -226,7 +240,7 @@ function CameraScrollContent({ loadedImages }: { loadedImages: HTMLImageElement[
         {/* OVERLAY 2: 25% - 45% */}
         <motion.div 
           style={{ opacity: op2, y: y2 }}
-          className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center p-6 text-center"
+          className="pointer-events-none absolute inset-0 flex flex-col items-center justify-start md:justify-center pt-24 md:pt-0 p-6 text-center"
         >
           <div className="backdrop-blur-md bg-white/70 p-8 rounded-2xl shadow-sm border border-slate-200 max-w-lg">
             <p className="text-2xl md:text-4xl font-medium text-slate-900 text-balance leading-tight select-none">
@@ -238,7 +252,7 @@ function CameraScrollContent({ loadedImages }: { loadedImages: HTMLImageElement[
         {/* OVERLAY 3: 55% - 75% */}
         <motion.div 
           style={{ opacity: op3, y: y3 }}
-          className="pointer-events-none absolute inset-0 flex flex-col items-center flex-end justify-center p-6 text-center"
+          className="pointer-events-none absolute inset-0 flex flex-col items-center justify-start md:justify-center pt-24 md:pt-0 p-6 text-center"
         >
           <div className="backdrop-blur-md bg-white/70 p-8 rounded-2xl shadow-sm border border-slate-200 max-w-lg">
             <p className="text-xl md:text-3xl font-medium text-slate-900 text-balance leading-snug select-none">

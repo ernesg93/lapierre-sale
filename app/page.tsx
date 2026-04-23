@@ -1,4 +1,5 @@
 import CameraScroll from "@/components/CameraScroll";
+import StickyHeader from "@/components/StickyHeader";
 import PurchaseConfig from "@/components/PurchaseConfig";
 import TechSpecs from "@/components/TechSpecs";
 import TrustSection from "@/components/TrustSection";
@@ -8,6 +9,7 @@ import Footer from "@/components/Footer";
 export default function Home() {
   return (
     <main className="relative min-h-screen bg-white">
+      <StickyHeader />
       <CameraScroll />
       <PurchaseConfig />
       <TechSpecs />
