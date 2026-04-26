@@ -26,7 +26,7 @@ export default function FAQ() {
   };
 
   return (
-    <section className="py-24 bg-[#F8FAFC] border-t border-slate-200 w-full">
+    <section id="faq" className="py-24 bg-[#F8FAFC] border-t border-slate-200 w-full">
       <div className="max-w-3xl mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-4 tracking-tight">Preguntas Frecuentes</h2>
@@ -45,12 +45,15 @@ export default function FAQ() {
               >
                 <button 
                   onClick={() => toggle(idx)}
+                  aria-expanded={isOpen}
+                  aria-controls={`faq-answer-${idx}`}
                   className="w-full px-6 py-5 text-left flex items-center justify-between focus:outline-none"
                 >
                   <span className="text-lg font-semibold text-slate-900">{faq.question}</span>
                   <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform ${isOpen ? 'rotate-180 text-[#A855F7]' : ''}`} />
                 </button>
                 <div 
+                  id={`faq-answer-${idx}`}
                   className={`grid transition-all duration-300 ease-in-out ${isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}
                 >
                   <div className="overflow-hidden">

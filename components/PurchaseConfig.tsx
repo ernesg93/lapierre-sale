@@ -1,7 +1,5 @@
 import React from 'react';
-
-// Formato internacional sin '+' (Ej: código de país + número, 34 para España, 549 para Argentina, 53 para Cuba)
-const WHATSAPP_NUMBER = "5356793586";
+import { buildWhatsAppUrl } from '@/src/config/site';
 
 const configOptions = [
   {
@@ -67,7 +65,7 @@ export default function PurchaseConfig() {
               </div>
               
               <a 
-                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(opt.message)}`}
+                href={buildWhatsAppUrl(opt.message)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={`w-full py-4 text-center rounded-xl font-semibold transition-colors focus:ring-4 focus:outline-none ${

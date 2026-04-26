@@ -1,9 +1,7 @@
 "use client";
 
 import React from 'react';
-
-// Formato internacional sin '+' (Ej: código de país + número)
-const WHATSAPP_NUMBER = "5356793586";
+import { siteConfig, whatsappUrl } from '@/src/config/site';
 
 export default function Footer() {
   const scrollTo = (id: string) => {
@@ -22,7 +20,7 @@ export default function Footer() {
           </div>
           
           <a 
-            href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hola,%20me%20gustaría%20saber%20más%20sobre%20la%20Lapierre.`}
+            href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="px-8 py-4 bg-[#A855F7] hover:bg-[#9333EA] text-white rounded-full font-semibold transition-transform hover:scale-105 shadow-lg shadow-purple-500/20"
@@ -48,12 +46,12 @@ export default function Footer() {
             <h3 className="text-white font-semibold mb-4 text-lg">Contacto Directo</h3>
             <p className="mb-2">¿Consultas sin compromiso?</p>
             <a 
-              href={`https://wa.me/${WHATSAPP_NUMBER}`}
+              href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="text-[#A855F7] hover:text-[#D8B4FE] font-medium transition-colors"
             >
-              wa.me/{WHATSAPP_NUMBER} →
+              WhatsApp {siteConfig.whatsappNumber} →
             </a>
           </div>
 

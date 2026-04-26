@@ -11,7 +11,7 @@ export const siteConfig = {
   price: "€ 3.200",
 
   /** Mensaje pre-cargado en WhatsApp al hacer click */
-  whatsappMessage: "Hola,%20tengo%20interés%20en%20la%20Lapierre.",
+  whatsappMessage: "Hola, tengo interés en la Lapierre.",
 
   // ─── Metadata del sitio ──────────────────────────────────────────────────
   name: "Lapierre Pulsium SAT",
@@ -37,5 +37,9 @@ export const siteConfig = {
   },
 } as const;
 
+export function buildWhatsAppUrl(message: string = siteConfig.whatsappMessage): string {
+  return `https://wa.me/${siteConfig.whatsappNumber}?text=${encodeURIComponent(message)}`;
+}
+
 /** URL completa de WhatsApp con mensaje pre-cargado */
-export const whatsappUrl = `https://wa.me/${siteConfig.whatsappNumber}?text=${siteConfig.whatsappMessage}`;
+export const whatsappUrl = buildWhatsAppUrl();

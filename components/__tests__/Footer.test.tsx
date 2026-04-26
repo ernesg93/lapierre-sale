@@ -2,6 +2,7 @@ import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import Footer from '../Footer';
+import { buildWhatsAppUrl, whatsappUrl } from '@/src/config/site';
 
 describe('Footer Component', () => {
   it('renders the main title', () => {
@@ -9,12 +10,15 @@ describe('Footer Component', () => {
     expect(screen.getByText('Lapierre Híbrida Carbono')).toBeInTheDocument();
   });
 
-  it('contains correctly formatted whatsapp links', () => {
+  it('uses centralized whatsapp url contract for CTA links', () => {
     render(<Footer />);
-    const links = screen.getAllByRole('link');
-    // Primary CTA and secondary text link
-    const waLinks = links.filter(l => l.getAttribute('href')?.includes('wa.me/5356793586'));
-    expect(waLinks.length).toBe(2);
+    const links = screen.getAllByRole('link').filter((link) =>
+      link.getAttribute('href')?.includes('wa.me/'),
+    );
+
+    expect(links).toHaveLength(2);
+    expect(links[0]).toHaveAttribute('href', whatsappUrl);
+    expect(links[1]).toHaveAttribute('href', buildWhatsAppUrl());
   });
 
   it('renders navigation buttons', () => {

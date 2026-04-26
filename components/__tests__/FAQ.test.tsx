@@ -4,6 +4,14 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import FAQ from '../FAQ';
 
 describe('FAQ Component', () => {
+  it('exposes exactly one visible faq anchor destination', () => {
+    const { container } = render(<FAQ />);
+    const faqAnchors = container.querySelectorAll('section#faq');
+
+    expect(faqAnchors).toHaveLength(1);
+    expect(faqAnchors[0]).toBeVisible();
+  });
+
   it('renders the title and all questions', () => {
     render(<FAQ />);
     expect(screen.getByText('Preguntas Frecuentes')).toBeInTheDocument();
@@ -13,12 +21,12 @@ describe('FAQ Component', () => {
   });
 
   it('initially has all answers collapsed', () => {
-    const { container } = render(<FAQ />);
-    // In FAQ.tsx, the answer container has 'grid-rows-[0fr]' when closed
-    const answerContainers = container.querySelectorAll('.grid.transition-all');
-    answerContainers.forEach(container => {
-      expect(container).toHaveClass('grid-rows-[0fr]');
-      expect(container).toHaveClass('opacity-0');
+    render(<FAQ />);
+    const questionButtons = screen.getAllByRole('button');
+
+    expect(questionButtons).toHaveLength(3);
+    questionButtons.forEach((button) => {
+      expect(button).toHaveAttribute('aria-expanded', 'false');
     });
   });
 
@@ -31,6 +39,7 @@ describe('FAQ Component', () => {
 
     // Click to open
     fireEvent.click(button);
+    expect(button).toHaveAttribute('aria-expanded', 'true');
     
     // The container for the answer is the parent of the paragraph
     const answerText = screen.getByText(/cuadro jamás tocó el asfalto/);
@@ -41,8 +50,7 @@ describe('FAQ Component', () => {
 
     // Click again to close
     fireEvent.click(button);
-    expect(container).toHaveClass('grid-rows-[0fr]');
-    expect(container).toHaveClass('opacity-0');
+    expect(button).toHaveAttribute('aria-expanded', 'false');
   });
 
   it('only allows one answer to be open at a time (exclusive toggle)', () => {

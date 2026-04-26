@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { useScroll, useTransform } from 'framer-motion';
 import StickyHeader from '../StickyHeader';
 import useActiveSection from '../../hooks/useActiveSection';
@@ -29,8 +29,6 @@ vi.mock('framer-motion', async () => {
         <span style={style} className={className}>{children}</span>
       ),
     },
-    useScroll: vi.fn(),
-    useTransform: vi.fn(),
     AnimatePresence: ({ children }: any) => <>{children}</>,
   };
 });
@@ -38,6 +36,7 @@ vi.mock('framer-motion', async () => {
 describe('StickyHeader Component', () => {
   beforeEach(() => {
     vi.resetAllMocks();
+    window.history.replaceState(null, '', '/');
     
     // Default mock for useScroll: at the top (0)
     vi.mocked(useScroll).mockReturnValue({
@@ -52,10 +51,28 @@ describe('StickyHeader Component', () => {
     } as any);
 
     // Mock useTransform to return the output values
-    vi.mocked(vi.mocked(useTransform)).mockImplementation((value, input, output) => output[0]);
+    vi.mocked(useTransform).mockImplementation((...args: any[]) => {
+      const output = args[2];
+      return Array.isArray(output) ? output[0] : 0;
+    });
 
     // Default mock for useActiveSection
     vi.mocked(useActiveSection).mockReturnValue(null);
+  });
+
+  it('updates hash to #faq when clicking Preguntas navigation', () => {
+    const faqSection = document.createElement('section');
+    faqSection.id = 'faq';
+    faqSection.scrollIntoView = vi.fn();
+    document.body.appendChild(faqSection);
+
+    render(<StickyHeader />);
+    fireEvent.click(screen.getByRole('button', { name: /Preguntas/i }));
+
+    expect(window.location.hash).toBe('#faq');
+    expect(faqSection.scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth' });
+
+    faqSection.remove();
   });
 
   it('highlights the active section link', () => {
