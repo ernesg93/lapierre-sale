@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { siteConfig, whatsappUrl } from "@/src/config/site";
 import useActiveSection from "@/hooks/useActiveSection";
 

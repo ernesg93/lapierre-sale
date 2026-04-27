@@ -2,6 +2,7 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { useScroll, useTransform } from 'framer-motion';
+import type { MotionValue } from 'framer-motion';
 import CameraScroll, { calculateImageDrawProps } from '../CameraScroll';
 
 // Mocking framer-motion
@@ -15,22 +16,33 @@ vi.mock('framer-motion', async () => {
 });
 
 describe('CameraScroll Component', () => {
+  type MockMotionValue<T> = Pick<MotionValue<T>, 'get' | 'on'>;
+
+  const createMockMotionValue = <T,>(value: T): MockMotionValue<T> => ({
+    get: vi.fn(() => value) as unknown as MockMotionValue<T>['get'],
+    on: vi.fn(() => vi.fn()) as unknown as MockMotionValue<T>['on'],
+  });
+
+  type MockUseTransform = {
+    <O>(value: MotionValue<number>, input: number[], output: O[]): MotionValue<O>;
+  };
+
   beforeEach(() => {
     vi.resetAllMocks();
     vi.stubGlobal('requestAnimationFrame', vi.fn((cb) => cb()));
     
     // Default mock for useScroll
     vi.mocked(useScroll).mockReturnValue({
-      scrollYProgress: {
-        get: vi.fn(() => 0),
-        on: vi.fn(() => vi.fn()),
-      },
-    } as any);
+      scrollYProgress: createMockMotionValue(0),
+    } as unknown as ReturnType<typeof useScroll>);
 
     // Default mock for useTransform
-    vi.mocked(useTransform).mockImplementation((value, input, output) => {
-      return output[0];
-    });
+    const useTransformRange: MockUseTransform = (_value, _input, output) =>
+      createMockMotionValue(output[0]) as unknown as MotionValue<(typeof output)[number]>;
+
+    vi.mocked(useTransform).mockImplementation(
+      useTransformRange as unknown as typeof useTransform,
+    );
   });
 
   it('shows error message if manifest fails to load', async () => {
@@ -86,8 +98,12 @@ describe('CameraScroll Component', () => {
   });
 
   it('renders different overlays based on scroll progress', async () => {
-    // Mocking useTransform to return 1 (visible) for all overlays
-    vi.mocked(useTransform).mockReturnValue(1 as any);
+    // Mocking useTransform to return visible motion values for all overlays
+    const visibleTransform: MockUseTransform = <O,>() =>
+      createMockMotionValue(1 as unknown as O) as unknown as MotionValue<O>;
+    vi.mocked(useTransform).mockImplementation(
+      visibleTransform as unknown as typeof useTransform,
+    );
 
     const manifest = ['/f1.jpg'];
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({

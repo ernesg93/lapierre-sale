@@ -5,7 +5,6 @@ import { useScroll, useTransform, motion } from "framer-motion";
 import { whatsappUrl, siteConfig } from "@/src/config/site";
 
 export default function CameraScroll() {
-  const [framesUrls, setFramesUrls] = useState<string[]>([]);
   const [loadedImages, setLoadedImages] = useState<HTMLImageElement[]>([]);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [manifestError, setManifestError] = useState(false);
@@ -21,8 +20,6 @@ export default function CameraScroll() {
         if (urls.length === 0) {
           throw new Error("No frames found in manifest");
         }
-        setFramesUrls(urls);
-
         // Preload images in batches to avoid connection overload
         const imgCache: HTMLImageElement[] = [];
         let loadedCount = 0;
