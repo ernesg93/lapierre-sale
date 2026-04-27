@@ -1,5 +1,5 @@
 import React from 'react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import PurchaseConfig from '../PurchaseConfig';
 import * as siteModule from '@/src/config/site';
@@ -12,35 +12,29 @@ describe('PurchaseConfig', () => {
 
   it('renders all three base options', () => {
     render(<PurchaseConfig />);
-    expect(screen.getByText('Solo Bici')).toBeInTheDocument();
-    expect(screen.getByText('Pack Completo')).toBeInTheDocument();
-    expect(screen.getByText('Accesorios por separado')).toBeInTheDocument();
+
+    siteModule.siteConfig.sale.purchaseOptions.forEach((option) => {
+      expect(screen.getByText(option.title)).toBeInTheDocument();
+    });
   });
 
   it('builds CTA whatsapp links from centralized base and dynamic messages', () => {
-    const buildSpy = vi.spyOn(siteModule, 'buildWhatsAppUrl');
-
     render(<PurchaseConfig />);
     const links = screen.getAllByRole('link');
+    const options = siteModule.siteConfig.sale.purchaseOptions;
 
-    expect(links).toHaveLength(3);
-    links.forEach((link) => {
-      expect(link).toHaveAttribute('href', expect.stringContaining(`https://wa.me/${siteModule.siteConfig.whatsappNumber}`));
+    expect(links).toHaveLength(options.length);
+    links.forEach((link, index) => {
+      const option = options[index];
+
+      expect(link).toHaveAttribute(
+        'href',
+        siteModule.buildPurchaseWhatsAppUrl(option.title),
+      );
+      expect(link).toHaveAttribute(
+        'href',
+        expect.stringContaining(`https://wa.me/${siteModule.siteConfig.whatsappNumber}`),
+      );
     });
-
-    expect(buildSpy).toHaveBeenCalledTimes(3);
-    expect(buildSpy).toHaveBeenCalledWith('Hola, vi la Lapierre en la web y me interesa la opción: Solo Bici.');
-    expect(buildSpy).toHaveBeenCalledWith('Hola, vi la Lapierre en la web y me interesa la opción: Pack Completo.');
-
-    expect(links[0]).toHaveAttribute(
-      'href',
-      siteModule.buildWhatsAppUrl('Hola, vi la Lapierre en la web y me interesa la opción: Solo Bici.'),
-    );
-    expect(links[1]).toHaveAttribute(
-      'href',
-      siteModule.buildWhatsAppUrl('Hola, vi la Lapierre en la web y me interesa la opción: Pack Completo.'),
-    );
-
-    buildSpy.mockRestore();
   });
 });

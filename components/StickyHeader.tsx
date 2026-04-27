@@ -6,6 +6,7 @@ import { siteConfig, whatsappUrl } from "@/src/config/site";
 import useActiveSection from "@/hooks/useActiveSection";
 
 export default function StickyHeader() {
+  const sale = siteConfig.sale;
   const { scrollY, scrollYProgress } = useScroll();
   
   // Lista de secciones a observar
@@ -53,7 +54,7 @@ export default function StickyHeader() {
         <div className="px-6 py-4 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <span className="text-slate-900 font-bold tracking-tight text-sm sm:text-lg whitespace-nowrap">
-              {siteConfig.name}
+              {sale.productName}
             </span>
             
             {/* Precio dinámico (aparece al scrollear) */}
@@ -61,7 +62,7 @@ export default function StickyHeader() {
               style={{ opacity: showCTA }}
               className="hidden sm:inline-block text-[#A855F7] font-bold text-sm bg-[#A855F7]/10 px-2 py-0.5 rounded-lg border border-[#A855F7]/20"
             >
-              {siteConfig.price}
+              {sale.price}
             </motion.span>
           </div>
           

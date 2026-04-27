@@ -4,6 +4,8 @@ import React from 'react';
 import { siteConfig, whatsappUrl } from '@/src/config/site';
 
 export default function Footer() {
+  const sale = siteConfig.sale;
+
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: 'smooth' });
@@ -15,8 +17,8 @@ export default function Footer() {
         
         <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-8">
           <div>
-            <h2 className="text-3xl font-bold text-white tracking-tight mb-2">Lapierre Híbrida Carbono</h2>
-            <p className="text-slate-400 max-w-sm">Una bici espectacular esperando salir a rodar. Lista para entregar.</p>
+            <h2 className="text-3xl font-bold text-white tracking-tight mb-2">{sale.productName}</h2>
+            <p className="text-slate-400 max-w-sm">{sale.footer.blurb}</p>
           </div>
           
           <a 
@@ -25,7 +27,7 @@ export default function Footer() {
             rel="noopener noreferrer"
             className="px-8 py-4 bg-[#A855F7] hover:bg-[#9333EA] text-white rounded-full font-semibold transition-transform hover:scale-105 shadow-lg shadow-purple-500/20"
           >
-            Darle un nuevo hogar a esta Lapierre
+            {sale.footer.primaryCtaLabel}
           </a>
         </div>
 

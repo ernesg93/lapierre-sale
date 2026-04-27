@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: siteConfig.title,
-  description: siteConfig.description,
+  title: siteConfig.sale.metadata.title,
+  description: siteConfig.sale.metadata.description,
   metadataBase: new URL(siteConfig.url),
   alternates: {
     canonical: "/",
@@ -23,24 +23,24 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: siteConfig.url,
-    title: siteConfig.title,
-    description: siteConfig.description,
+    title: siteConfig.sale.metadata.title,
+    description: siteConfig.sale.metadata.description,
     images: [
       {
-        url: siteConfig.ogImage,
+        url: siteConfig.sale.metadata.ogImage,
         width: 1024,
         height: 1024,
-        alt: siteConfig.name,
+        alt: siteConfig.sale.productName,
       },
     ],
     locale: "es_AR",
-    siteName: siteConfig.name,
+    siteName: siteConfig.sale.productName,
   },
   twitter: {
     card: "summary_large_image",
-    title: siteConfig.title,
-    description: siteConfig.description,
-    images: [siteConfig.ogImage],
+    title: siteConfig.sale.metadata.title,
+    description: siteConfig.sale.metadata.description,
+    images: [siteConfig.sale.metadata.ogImage],
   },
   robots: {
     index: true,

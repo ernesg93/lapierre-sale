@@ -2,12 +2,26 @@ import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import Footer from '../Footer';
-import { buildWhatsAppUrl, whatsappUrl } from '@/src/config/site';
+import { buildWhatsAppUrl, siteConfig, whatsappUrl } from '@/src/config/site';
 
 describe('Footer Component', () => {
   it('renders the main title', () => {
     render(<Footer />);
-    expect(screen.getByText('Lapierre Híbrida Carbono')).toBeInTheDocument();
+    expect(screen.getByText(siteConfig.sale.productName)).toBeInTheDocument();
+    expect(screen.getByText(siteConfig.sale.footer.primaryCtaLabel)).toBeInTheDocument();
+  });
+
+  it('keeps heading aligned with centralized product name even if footer heading drifts', () => {
+    const footerMutable = siteConfig.sale.footer as unknown as { heading: string };
+    const originalHeading = footerMutable.heading;
+    footerMutable.heading = 'Título local desalineado';
+
+    render(<Footer />);
+
+    expect(screen.getByText(siteConfig.sale.productName)).toBeInTheDocument();
+    expect(screen.queryByText('Título local desalineado')).not.toBeInTheDocument();
+
+    footerMutable.heading = originalHeading;
   });
 
   it('uses centralized whatsapp url contract for CTA links', () => {
