@@ -5,7 +5,6 @@ import { useScroll, useTransform, motion } from "framer-motion";
 import { whatsappUrl, siteConfig } from "@/src/config/site";
 
 export default function CameraScroll() {
-  const [framesUrls, setFramesUrls] = useState<string[]>([]);
   const [loadedImages, setLoadedImages] = useState<HTMLImageElement[]>([]);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [manifestError, setManifestError] = useState(false);
@@ -21,8 +20,6 @@ export default function CameraScroll() {
         if (urls.length === 0) {
           throw new Error("No frames found in manifest");
         }
-        setFramesUrls(urls);
-
         // Preload images in batches to avoid connection overload
         const imgCache: HTMLImageElement[] = [];
         let loadedCount = 0;
@@ -123,6 +120,7 @@ export function calculateImageDrawProps(canvasWidth: number, canvasHeight: numbe
 
 // Componente separado para que useScroll siempre encuentre su target ref montado en el DOM
 function CameraScrollContent({ loadedImages }: { loadedImages: HTMLImageElement[] }) {
+  const sale = siteConfig.sale;
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -221,10 +219,10 @@ function CameraScrollContent({ loadedImages }: { loadedImages: HTMLImageElement[
         >
           <div className="backdrop-blur-md bg-white/70 p-8 rounded-2xl shadow-sm border border-slate-200 max-w-xl">
             <h1 className="text-4xl md:text-6xl font-bold text-slate-900 tracking-tight mb-4 select-none">
-              Lapierre Híbrida Carbono
+              {sale.productName}
             </h1>
             <p className="text-lg md:text-xl text-slate-600 mb-6 text-balance select-none">
-              Gravel & Urbano | {'<'} 1 año | Estado 8/10
+              {sale.hero.claims.join(' | ')}
             </p>
             <div className="pointer-events-auto">
               <button 
@@ -244,7 +242,7 @@ function CameraScrollContent({ loadedImages }: { loadedImages: HTMLImageElement[
         >
           <div className="backdrop-blur-md bg-white/70 p-8 rounded-2xl shadow-sm border border-slate-200 max-w-lg">
             <p className="text-2xl md:text-4xl font-medium text-slate-900 text-balance leading-tight select-none">
-              Cuadro carbono. <br/>Ruedas DT Swiss. <br/><span className="text-[#A855F7]">Frenos Shimano Hidráulicos.</span>
+              {sale.hero.detailLines[0]} <br/>{sale.hero.detailLines[1]} <br/><span className="text-[#A855F7]">{sale.hero.detailLines[2]}</span>
             </p>
           </div>
         </motion.div>
@@ -256,8 +254,8 @@ function CameraScrollContent({ loadedImages }: { loadedImages: HTMLImageElement[
         >
           <div className="backdrop-blur-md bg-white/70 p-8 rounded-2xl shadow-sm border border-slate-200 max-w-lg">
             <p className="text-xl md:text-3xl font-medium text-slate-900 text-balance leading-snug select-none">
-              Mantenimiento al día. Uso real, sin sorpresas.<br/>
-              <span className="text-slate-500 text-lg md:text-xl block mt-2">Documentación original incluida.</span>
+              {sale.hero.detailLines[3]}<br/>
+              <span className="text-slate-500 text-lg md:text-xl block mt-2">{sale.hero.detailLines[4]}</span>
             </p>
           </div>
         </motion.div>
@@ -272,7 +270,7 @@ function CameraScrollContent({ loadedImages }: { loadedImages: HTMLImageElement[
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label={`Contactar por WhatsApp sobre la ${siteConfig.name}`}
+              aria-label={`Contactar por WhatsApp sobre la ${sale.productName}`}
               className="px-8 py-4 bg-[#A855F7] hover:bg-[#9333EA] text-white rounded-full font-semibold transition-all hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-[#A855F7]/30"
             >
               Contactar por WhatsApp

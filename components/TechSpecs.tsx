@@ -1,22 +1,17 @@
 import React from 'react';
-
-const specs = [
-  { label: "Cuadro", value: "Carbono Lapierre Advanced Composite" },
-  { label: "Grupo", value: "Shimano GRX 1x11 (Híbrido configurado)" },
-  { label: "Ruedas", value: "DT Swiss G1800 Spline" },
-  { label: "Frenos", value: "Shimano Hidráulicos MT200" },
-  { label: "Talla", value: "M (Ideal para 1.70m - 1.82m)" },
-  { label: "Peso aprox.", value: "9.8 kg" },
-  { label: "Año de compra", value: "2025" },
-  { label: "Uso principal", value: "Urbano y senderos ligeros" },
-  { label: "Kilometraje est.", value: "< 500 km" },
-  { 
-    label: "Estado 8/10", 
-    value: "Mecánica 10/10. Detalles cosméticos menores en la pintura por candado U-Lock y uso diario." 
-  },
-];
+import { siteConfig } from '@/src/config/site';
 
 export default function TechSpecs() {
+  const saleSpecs = siteConfig.sale.specs;
+  const specs = [
+    { label: 'Cuadro', value: saleSpecs.frame },
+    { label: 'Frenos', value: saleSpecs.brakes },
+    { label: 'Ruedas', value: saleSpecs.wheels },
+    { label: 'Transmisión', value: saleSpecs.drivetrain },
+    { label: 'Estado', value: saleSpecs.condition },
+    { label: 'Uso', value: saleSpecs.usage },
+  ];
+
   return (
     <section id="specs" className="py-24 bg-[#F8FAFC] border-t border-slate-200 w-full">
       <div className="max-w-4xl mx-auto px-6">

@@ -10,8 +10,6 @@ export default function useActiveSection(sectionIds: string[], threshold = 0.5):
   const [activeId, setActiveId] = useState<string | null>(null);
 
   useEffect(() => {
-    const observers: IntersectionObserver[] = [];
-
     const callback = (entries: IntersectionObserverEntry[]) => {
       // Filtrar solo las que están intersectando y buscar la de mayor ratio
       const visibleEntries = entries.filter(entry => entry.isIntersecting);

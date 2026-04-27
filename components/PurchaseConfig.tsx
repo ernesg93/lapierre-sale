@@ -1,37 +1,9 @@
 import React from 'react';
-
-// Formato internacional sin '+' (Ej: código de país + número, 34 para España, 549 para Argentina, 53 para Cuba)
-const WHATSAPP_NUMBER = "5356793586";
-
-const configOptions = [
-  {
-    id: "base",
-    title: "Solo Bici",
-    price: "1.200€",
-    description: "Configuración estándar de serie.",
-    highlight: false,
-    message: "Hola, vi la Lapierre en la web y me interesa la opción: Solo Bici."
-  },
-  {
-    id: "pack",
-    title: "Pack Completo",
-    price: "1.350€",
-    badge: "Ahorra 15€",
-    description: "Incluye pedales automáticos, 2 portabidones élite, bolsa de sillín y luces recargables.",
-    highlight: true,
-    message: "Hola, vi la Lapierre en la web y me interesa la opción: Pack Completo."
-  },
-  {
-    id: "custom",
-    title: "Accesorios por separado",
-    price: "Desde 15€",
-    description: "Elegí qué necesitas sumarle a la base y coordinamos el precio final.",
-    highlight: false,
-    message: "Hola, vi la Lapierre en la web y me interesa la opción: Accesorios por separado."
-  }
-];
+import { buildPurchaseWhatsAppUrl, siteConfig } from '@/src/config/site';
 
 export default function PurchaseConfig() {
+  const configOptions = siteConfig.sale.purchaseOptions;
+
   return (
     <section id="config" className="py-24 bg-white w-full">
       <div className="max-w-6xl mx-auto px-6">
@@ -67,7 +39,7 @@ export default function PurchaseConfig() {
               </div>
               
               <a 
-                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(opt.message)}`}
+                href={buildPurchaseWhatsAppUrl(opt.title)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={`w-full py-4 text-center rounded-xl font-semibold transition-colors focus:ring-4 focus:outline-none ${

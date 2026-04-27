@@ -2,19 +2,37 @@ import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import Footer from '../Footer';
+import { buildWhatsAppUrl, siteConfig, whatsappUrl } from '@/src/config/site';
 
 describe('Footer Component', () => {
   it('renders the main title', () => {
     render(<Footer />);
-    expect(screen.getByText('Lapierre Híbrida Carbono')).toBeInTheDocument();
+    expect(screen.getByText(siteConfig.sale.productName)).toBeInTheDocument();
+    expect(screen.getByText(siteConfig.sale.footer.primaryCtaLabel)).toBeInTheDocument();
   });
 
-  it('contains correctly formatted whatsapp links', () => {
+  it('keeps heading aligned with centralized product name even if footer heading drifts', () => {
+    const footerMutable = siteConfig.sale.footer as unknown as { heading: string };
+    const originalHeading = footerMutable.heading;
+    footerMutable.heading = 'Título local desalineado';
+
     render(<Footer />);
-    const links = screen.getAllByRole('link');
-    // Primary CTA and secondary text link
-    const waLinks = links.filter(l => l.getAttribute('href')?.includes('wa.me/5356793586'));
-    expect(waLinks.length).toBe(2);
+
+    expect(screen.getByText(siteConfig.sale.productName)).toBeInTheDocument();
+    expect(screen.queryByText('Título local desalineado')).not.toBeInTheDocument();
+
+    footerMutable.heading = originalHeading;
+  });
+
+  it('uses centralized whatsapp url contract for CTA links', () => {
+    render(<Footer />);
+    const links = screen.getAllByRole('link').filter((link) =>
+      link.getAttribute('href')?.includes('wa.me/'),
+    );
+
+    expect(links).toHaveLength(2);
+    expect(links[0]).toHaveAttribute('href', whatsappUrl);
+    expect(links[1]).toHaveAttribute('href', buildWhatsAppUrl());
   });
 
   it('renders navigation buttons', () => {

@@ -1,11 +1,11 @@
 "use client";
 
 import React from 'react';
-
-// Formato internacional sin '+' (Ej: código de país + número)
-const WHATSAPP_NUMBER = "5356793586";
+import { siteConfig, whatsappUrl } from '@/src/config/site';
 
 export default function Footer() {
+  const sale = siteConfig.sale;
+
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: 'smooth' });
@@ -17,17 +17,17 @@ export default function Footer() {
         
         <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-8">
           <div>
-            <h2 className="text-3xl font-bold text-white tracking-tight mb-2">Lapierre Híbrida Carbono</h2>
-            <p className="text-slate-400 max-w-sm">Una bici espectacular esperando salir a rodar. Lista para entregar.</p>
+            <h2 className="text-3xl font-bold text-white tracking-tight mb-2">{sale.productName}</h2>
+            <p className="text-slate-400 max-w-sm">{sale.footer.blurb}</p>
           </div>
           
           <a 
-            href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hola,%20me%20gustaría%20saber%20más%20sobre%20la%20Lapierre.`}
+            href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="px-8 py-4 bg-[#A855F7] hover:bg-[#9333EA] text-white rounded-full font-semibold transition-transform hover:scale-105 shadow-lg shadow-purple-500/20"
           >
-            Darle un nuevo hogar a esta Lapierre
+            {sale.footer.primaryCtaLabel}
           </a>
         </div>
 
@@ -48,12 +48,12 @@ export default function Footer() {
             <h3 className="text-white font-semibold mb-4 text-lg">Contacto Directo</h3>
             <p className="mb-2">¿Consultas sin compromiso?</p>
             <a 
-              href={`https://wa.me/${WHATSAPP_NUMBER}`}
+              href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="text-[#A855F7] hover:text-[#D8B4FE] font-medium transition-colors"
             >
-              wa.me/{WHATSAPP_NUMBER} →
+              WhatsApp {siteConfig.whatsappNumber} →
             </a>
           </div>
 

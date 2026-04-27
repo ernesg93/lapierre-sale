@@ -2,6 +2,7 @@ import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import PurchaseConfig from '../PurchaseConfig';
+import * as siteModule from '@/src/config/site';
 
 describe('PurchaseConfig', () => {
   it('renders the delivery options title', () => {
@@ -11,16 +12,29 @@ describe('PurchaseConfig', () => {
 
   it('renders all three base options', () => {
     render(<PurchaseConfig />);
-    expect(screen.getByText('Solo Bici')).toBeInTheDocument();
-    expect(screen.getByText('Pack Completo')).toBeInTheDocument();
-    expect(screen.getByText('Accesorios por separado')).toBeInTheDocument();
+
+    siteModule.siteConfig.sale.purchaseOptions.forEach((option) => {
+      expect(screen.getByText(option.title)).toBeInTheDocument();
+    });
   });
 
-  it('uses the correct international phone number in whatsapp links', () => {
+  it('builds CTA whatsapp links from centralized base and dynamic messages', () => {
     render(<PurchaseConfig />);
     const links = screen.getAllByRole('link');
-    links.forEach(link => {
-      expect(link).toHaveAttribute('href', expect.stringContaining('https://wa.me/5356793586'));
+    const options = siteModule.siteConfig.sale.purchaseOptions;
+
+    expect(links).toHaveLength(options.length);
+    links.forEach((link, index) => {
+      const option = options[index];
+
+      expect(link).toHaveAttribute(
+        'href',
+        siteModule.buildPurchaseWhatsAppUrl(option.title),
+      );
+      expect(link).toHaveAttribute(
+        'href',
+        expect.stringContaining(`https://wa.me/${siteModule.siteConfig.whatsappNumber}`),
+      );
     });
   });
 });

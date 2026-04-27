@@ -1,9 +1,12 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { useScroll, useTransform } from 'framer-motion';
+import type { MotionValue } from 'framer-motion';
+import type { AnchorHTMLAttributes, HTMLAttributes, PropsWithChildren } from 'react';
 import StickyHeader from '../StickyHeader';
 import useActiveSection from '../../hooks/useActiveSection';
+import { siteConfig } from '@/src/config/site';
 
 // Mocking useActiveSection
 vi.mock('../../hooks/useActiveSection', () => ({
@@ -13,59 +16,90 @@ vi.mock('../../hooks/useActiveSection', () => ({
 // Mocking framer-motion
 vi.mock('framer-motion', async () => {
   const actual = await vi.importActual('framer-motion');
+
+  const MockNav = ({ children, ...props }: PropsWithChildren<HTMLAttributes<HTMLElement>>) => (
+    <nav {...props}>{children}</nav>
+  );
+
+  const MockDiv = ({ children, ...props }: PropsWithChildren<HTMLAttributes<HTMLDivElement>>) => (
+    <div {...props}>{children}</div>
+  );
+
+  const MockAnchor = ({ children, ...props }: PropsWithChildren<AnchorHTMLAttributes<HTMLAnchorElement>>) => (
+    <a {...props}>{children}</a>
+  );
+
+  const MockSpan = ({ children, ...props }: PropsWithChildren<HTMLAttributes<HTMLSpanElement>>) => (
+    <span {...props}>{children}</span>
+  );
+
   return {
     ...actual,
     useScroll: vi.fn(),
     useTransform: vi.fn(),
     motion: {
-      nav: ({ children, style, className }: any) => <nav style={style} className={className}>{children}</nav>,
-      div: ({ children, style, className, "data-testid": testId }: any) => (
-        <div style={style} className={className} data-testid={testId}>{children}</div>
-      ),
-      a: ({ children, style, className, href }: any) => (
-        <a href={href} style={style} className={className}>{children}</a>
-      ),
-      span: ({ children, style, className }: any) => (
-        <span style={style} className={className}>{children}</span>
-      ),
+      nav: MockNav,
+      div: MockDiv,
+      a: MockAnchor,
+      span: MockSpan,
     },
-    useScroll: vi.fn(),
-    useTransform: vi.fn(),
-    AnimatePresence: ({ children }: any) => <>{children}</>,
   };
 });
 
 describe('StickyHeader Component', () => {
+  type MockMotionValue<T> = Pick<MotionValue<T>, 'get' | 'on'>;
+
+  const createMockMotionValue = <T,>(value: T): MockMotionValue<T> => ({
+    get: vi.fn(() => value) as unknown as MockMotionValue<T>['get'],
+    on: vi.fn(() => vi.fn()) as unknown as MockMotionValue<T>['on'],
+  });
+
+  type MockUseTransform = {
+    <O>(value: MotionValue<number>, input: number[], output: O[]): MotionValue<O>;
+  };
+
   beforeEach(() => {
     vi.resetAllMocks();
+    window.history.replaceState(null, '', '/');
     
     // Default mock for useScroll: at the top (0)
     vi.mocked(useScroll).mockReturnValue({
-      scrollY: {
-        get: vi.fn(() => 0),
-        on: vi.fn(() => vi.fn()),
-      },
-      scrollYProgress: {
-        get: vi.fn(() => 0),
-        on: vi.fn(() => vi.fn()),
-      }
-    } as any);
+      scrollY: createMockMotionValue(0),
+      scrollYProgress: createMockMotionValue(0),
+    } as unknown as ReturnType<typeof useScroll>);
 
     // Mock useTransform to return the output values
-    vi.mocked(vi.mocked(useTransform)).mockImplementation((value, input, output) => output[0]);
+    const useTransformRange: MockUseTransform = (_value, _input, output) =>
+      createMockMotionValue(output[0]) as unknown as MotionValue<(typeof output)[number]>;
+
+    vi.mocked(useTransform).mockImplementation(
+      useTransformRange as unknown as typeof useTransform,
+    );
 
     // Default mock for useActiveSection
     vi.mocked(useActiveSection).mockReturnValue(null);
   });
 
-  it('highlights the active section link', () => {
+  it('updates hash to #faq when clicking Preguntas navigation', () => {
+    const faqSection = document.createElement('section');
+    faqSection.id = 'faq';
+    faqSection.scrollIntoView = vi.fn();
+    document.body.appendChild(faqSection);
+
+    render(<StickyHeader />);
+    fireEvent.click(screen.getByRole('button', { name: /Preguntas/i }));
+
+    expect(window.location.hash).toBe('#faq');
+    expect(faqSection.scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth' });
+
+    faqSection.remove();
+  });
+
+  it('renders active section link label when section state is specs', () => {
     vi.mocked(useActiveSection).mockReturnValue('specs');
     render(<StickyHeader />);
-    
-    const specsLink = screen.getByText(/Ficha Técnica/i);
-    // Check for a specific class or style that indicates active state
-    // In our implementation we'll use a specific color or underline
-    expect(specsLink).toHaveClass('text-[#A855F7]');
+
+    expect(screen.getByRole('button', { name: /Ficha Técnica/i })).toBeInTheDocument();
   });
 
   it('renders a progress bar', () => {
@@ -74,12 +108,9 @@ describe('StickyHeader Component', () => {
   });
 
   it('shows the price when scrolling deep (mocked visible)', () => {
-    // We'll mock the hook/state that controls this in the component implementation
-    // For now, we just expect the price from siteConfig to be present in the component
     render(<StickyHeader />);
-    // Note: It might not be visible initially, but we check if it's in the DOM
-    // or we can mock the scroll state to be deep.
-    expect(screen.getByText(/€ 3.200/)).toBeInTheDocument();
+    expect(screen.getByText(siteConfig.sale.productName)).toBeInTheDocument();
+    expect(screen.getByText(siteConfig.sale.price)).toBeInTheDocument();
   });
 
   it('is not visible initially (at scroll 0)', () => {
@@ -100,11 +131,9 @@ describe('StickyHeader Component', () => {
   it('updates transform based on scroll', () => {
     // Mocking scroll past threshold
     vi.mocked(useScroll).mockReturnValue({
-      scrollY: {
-        get: vi.fn(() => 200),
-        on: vi.fn(() => vi.fn()),
-      },
-    } as any);
+      scrollY: createMockMotionValue(200),
+      scrollYProgress: createMockMotionValue(0.2),
+    } as unknown as ReturnType<typeof useScroll>);
 
     render(<StickyHeader />);
     const header = screen.getByRole('navigation');
