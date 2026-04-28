@@ -4,6 +4,7 @@ import useActiveSection from '../useActiveSection';
 
 describe('useActiveSection Hook', () => {
   let observerCallback: IntersectionObserverCallback;
+  let observerOptions: IntersectionObserverInit | undefined;
   const mockObserve = vi.fn();
   const mockUnobserve = vi.fn();
   const mockDisconnect = vi.fn();
@@ -33,8 +34,9 @@ describe('useActiveSection Hook', () => {
       readonly rootMargin = '0px';
       readonly thresholds = [0];
 
-      constructor(callback: IntersectionObserverCallback) {
+      constructor(callback: IntersectionObserverCallback, options?: IntersectionObserverInit) {
         observerCallback = callback;
+        observerOptions = options;
       }
 
       observe = mockObserve;
@@ -49,6 +51,12 @@ describe('useActiveSection Hook', () => {
   afterEach(() => {
     vi.unstubAllGlobals();
     vi.clearAllMocks();
+  });
+
+  it('uses internal observer threshold policy', () => {
+    renderHook(() => useActiveSection(['section1', 'section2']));
+
+    expect(observerOptions?.threshold).toEqual([0, 0.25, 0.5, 0.75, 1]);
   });
 
   it('should return null initially', () => {
@@ -81,5 +89,30 @@ describe('useActiveSection Hook', () => {
     });
 
     expect(result.current).toBe('section2');
+  });
+
+  it('keeps null when observer reports no intersecting entries', () => {
+    const { result } = renderHook(() => useActiveSection(['section1', 'section2']));
+
+    act(() => {
+      observerCallback(
+        [createObserverEntry('section1', 0.2, false), createObserverEntry('section2', 0.7, false)],
+        {} as IntersectionObserver,
+      );
+    });
+
+    expect(result.current).toBeNull();
+  });
+
+  it('does not recreate observer when only legacy threshold arg changes', () => {
+    const ids = ['section1', 'section2'];
+    const { rerender } = renderHook(({ threshold }) => (useActiveSection as unknown as (sectionIds: string[], threshold?: number) => string | null)(ids, threshold), {
+      initialProps: { threshold: 0.5 },
+    });
+
+    const disconnectCallsBeforeRerender = mockDisconnect.mock.calls.length;
+    rerender({ threshold: 0.75 });
+
+    expect(mockDisconnect.mock.calls.length).toBe(disconnectCallsBeforeRerender);
   });
 });

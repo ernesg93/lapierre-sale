@@ -3,10 +3,9 @@ import { useState, useEffect } from 'react';
 /**
  * Hook para detectar qué sección está actualmente en el viewport.
  * @param sectionIds Lista de IDs de los elementos a observar.
- * @param threshold Porcentaje de visibilidad para activar la sección (0 a 1).
  * @returns El ID de la sección activa o null.
  */
-export default function useActiveSection(sectionIds: string[], threshold = 0.5): string | null {
+export default function useActiveSection(sectionIds: string[]): string | null {
   const [activeId, setActiveId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -32,7 +31,7 @@ export default function useActiveSection(sectionIds: string[], threshold = 0.5):
     });
 
     return () => observer.disconnect();
-  }, [sectionIds, threshold]);
+  }, [sectionIds]);
 
   return activeId;
 }
