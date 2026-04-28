@@ -41,6 +41,8 @@ yarn-error.log*
 next-env.d.ts
 .opencode/
 .atl/
+.engram/
+sdd/
 *.jpg
 
-public\frames\manifest.json
+/public/frames/manifest.json
