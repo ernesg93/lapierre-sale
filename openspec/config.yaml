@@ -21,10 +21,12 @@ testing:
   coverage:
     available: true
     command: "npm run test:run -- --coverage"
+    reporters: "text,json-summary,html"
   quality_tools:
     linter: "npm run lint"
     type_checker: "npx tsc --noEmit"
-    formatter: "npx prettier --check ."
+    test_runner: "npm test"
+    coverage_runner: "npm run test:run -- --coverage"
 
 rules:
   proposal:

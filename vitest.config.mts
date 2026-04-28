@@ -12,5 +12,22 @@ export default defineConfig({
     },
     include: ['**/*.test.tsx', '**/*.test.ts'],
     globals: true,
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json-summary', 'html'],
+      include: ['app/**/*.{ts,tsx}', 'components/**/*.{ts,tsx}', 'hooks/**/*.{ts,tsx}', 'src/**/*.{ts,tsx}'],
+      exclude: [
+        '**/*.test.{ts,tsx}',
+        '**/__tests__/**',
+        '**/*.d.ts',
+        '**/node_modules/**',
+      ],
+      thresholds: {
+        lines: 86,
+        statements: 83,
+        functions: 82,
+        branches: 69,
+      },
+    },
   },
 });
