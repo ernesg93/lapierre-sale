@@ -4,13 +4,15 @@ import React from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { siteConfig, whatsappUrl } from "@/src/config/site";
 import useActiveSection from "@/hooks/useActiveSection";
+import { navigateToSection, type SectionTargetId } from "@/src/utils/sectionNavigation";
 
 export default function StickyHeader() {
   const sale = siteConfig.sale;
   const { scrollY, scrollYProgress } = useScroll();
   
   // Lista de secciones a observar
-  const sectionIds = ["specs", "trust", "faq"];
+  const sectionIds: SectionTargetId[] = ["config", "specs", "trust", "faq"];
+  // Canonical contract: useActiveSection(sectionIds) (threshold policy lives inside the hook)
   const activeSection = useActiveSection(sectionIds);
   
   // Aparece después de los 100px de scroll
@@ -22,18 +24,15 @@ export default function StickyHeader() {
   // aquí lo simplificamos para que framer maneje la visibilidad
   const showCTA = useTransform(scrollYProgress, [0, 0.15, 0.16], [0, 0, 1]);
 
-  const scrollToSection = (id: string) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-
-    el.scrollIntoView({ behavior: 'smooth' });
-    window.history.replaceState(null, '', `#${id}`);
+  const goToSection = (id: SectionTargetId) => {
+    navigateToSection(id, { focusTarget: true, smooth: true, updateHash: true });
   };
 
-  const navLinks = [
-    { name: "Ficha Técnica", id: "specs" },
-    { name: "Confianza", id: "trust" },
-    { name: "Preguntas", id: "faq" },
+  const navLinks: Array<{ name: string; id: SectionTargetId }> = [
+    { name: "Configuración", id: "config" as const },
+    { name: "Ficha Técnica", id: "specs" as const },
+    { name: "Confianza", id: "trust" as const },
+    { name: "Preguntas", id: "faq" as const },
   ];
 
   return (
@@ -71,18 +70,23 @@ export default function StickyHeader() {
               {navLinks.map((link) => {
                 const isActive = activeSection === link.id;
                 return (
-                  <button
+                  <a
                     key={link.id}
-                    onClick={() => scrollToSection(link.id)}
-                    className={`text-xs sm:text-sm font-medium transition-colors whitespace-nowrap relative group ${
+                    href={`#${link.id}`}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      goToSection(link.id);
+                    }}
+                    className={`text-xs sm:text-sm font-medium transition-colors whitespace-nowrap relative group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A855F7] ${
                       isActive ? "text-[#A855F7]" : "text-slate-600 hover:text-[#A855F7]"
                     }`}
+                    aria-current={isActive ? "page" : undefined}
                   >
                     {link.name}
                     <span className={`absolute -bottom-1 left-0 w-full h-[1px] bg-[#A855F7] transition-transform origin-left ${
                       isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
                     }`} />
-                  </button>
+                  </a>
                 );
               })}
             </div>
@@ -93,7 +97,9 @@ export default function StickyHeader() {
               target="_blank"
               rel="noopener noreferrer"
               style={{ opacity: showCTA, scale: showCTA }}
-              className="px-4 py-2 bg-[#A855F7] hover:bg-[#9333EA] text-white text-xs sm:text-sm font-bold rounded-xl transition-all shadow-md hover:shadow-purple-200"
+              tabIndex={showCTA.get() <= 0 ? -1 : 0}
+              aria-hidden={showCTA.get() <= 0}
+              className="px-4 py-2 bg-[#A855F7] hover:bg-[#9333EA] text-white text-xs sm:text-sm font-bold rounded-xl transition-all shadow-md hover:shadow-purple-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A855F7]"
             >
               Contactar
             </motion.a>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
-import { useScroll, useTransform } from 'framer-motion';
+import { useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import type { MotionValue } from 'framer-motion';
 import CameraScroll, { calculateImageDrawProps } from '../CameraScroll';
 import { siteConfig } from '@/src/config/site';
@@ -13,6 +13,7 @@ vi.mock('framer-motion', async () => {
     ...actual,
     useScroll: vi.fn(),
     useTransform: vi.fn(),
+    useReducedMotion: vi.fn(),
   };
 });
 
@@ -44,6 +45,8 @@ describe('CameraScroll Component', () => {
     vi.mocked(useTransform).mockImplementation(
       useTransformRange as unknown as typeof useTransform,
     );
+
+    vi.mocked(useReducedMotion).mockReturnValue(false);
   });
 
   it('shows error message if manifest fails to load', async () => {
@@ -164,6 +167,65 @@ describe('CameraScroll Component', () => {
     expect(
       screen.getByLabelText(`Contactar por WhatsApp sobre la ${siteConfig.sale.productName}`),
     ).toHaveAttribute('href');
+    expect(screen.getByRole('link', { name: /Ver ficha técnica/i })).toHaveAttribute('href', '#specs');
+  });
+
+  it('renders reduced-motion static branch with operable CTA', async () => {
+    vi.mocked(useReducedMotion).mockReturnValue(true);
+
+    const manifest = ['/f1.jpg'];
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve(manifest),
+    }));
+
+    vi.stubGlobal('Image', class {
+      onload = () => {};
+      set src(_value: string) {
+        setTimeout(() => this.onload(), 0);
+      }
+      decoding = 'async';
+    });
+
+    render(<CameraScroll />);
+
+    await waitFor(() => {
+      expect(screen.queryByText(/Preparando experiencia/)).not.toBeInTheDocument();
+    });
+
+    expect(screen.getByTestId('reduced-motion-hero')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Ver ficha técnica/i })).toHaveAttribute('href', '#specs');
+  });
+
+  it('exposes visible-focus utility classes on reduced-motion CTA controls', async () => {
+    vi.mocked(useReducedMotion).mockReturnValue(true);
+
+    const manifest = ['/f1.jpg'];
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve(manifest),
+    }));
+
+    vi.stubGlobal('Image', class {
+      onload = () => {};
+      set src(_value: string) {
+        setTimeout(() => this.onload(), 0);
+      }
+      decoding = 'async';
+    });
+
+    render(<CameraScroll />);
+
+    await waitFor(() => {
+      expect(screen.queryByText(/Preparando experiencia/)).not.toBeInTheDocument();
+    });
+
+    const cta = screen.getByRole('link', { name: /Contactar por WhatsApp/i });
+    cta.focus();
+
+    expect(document.activeElement).toBe(cta);
+    expect(cta.className).toContain('focus-visible:outline-2');
+    expect(cta.className).toContain('focus-visible:outline-offset-2');
   });
 
   it('calculates vertical offset for portrait aspect ratio (mobile)', () => {

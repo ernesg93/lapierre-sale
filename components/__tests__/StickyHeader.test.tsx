@@ -17,16 +17,44 @@ vi.mock('../../hooks/useActiveSection', () => ({
 vi.mock('framer-motion', async () => {
   const actual = await vi.importActual('framer-motion');
 
+  const getMotionValue = (value: unknown) => {
+    if (
+      value &&
+      typeof value === 'object' &&
+      'get' in value &&
+      typeof (value as { get: () => unknown }).get === 'function'
+    ) {
+      return (value as { get: () => unknown }).get();
+    }
+
+    return value;
+  };
+
+  const serializeStyle = (style: React.CSSProperties | undefined) => {
+    if (!style) return style;
+    const serialized = Object.fromEntries(
+      Object.entries(style).map(([key, value]) => [key, getMotionValue(value)]),
+    ) as React.CSSProperties;
+
+    if ('scaleX' in serialized) {
+      const scaleX = serialized.scaleX;
+      delete serialized.scaleX;
+      serialized.transform = `${serialized.transform ?? ''} scaleX(${scaleX})`.trim();
+    }
+
+    return serialized;
+  };
+
   const MockNav = ({ children, ...props }: PropsWithChildren<HTMLAttributes<HTMLElement>>) => (
-    <nav {...props}>{children}</nav>
+    <nav {...props} style={serializeStyle(props.style)}>{children}</nav>
   );
 
   const MockDiv = ({ children, ...props }: PropsWithChildren<HTMLAttributes<HTMLDivElement>>) => (
-    <div {...props}>{children}</div>
+    <div {...props} style={serializeStyle(props.style)}>{children}</div>
   );
 
   const MockAnchor = ({ children, ...props }: PropsWithChildren<AnchorHTMLAttributes<HTMLAnchorElement>>) => (
-    <a {...props}>{children}</a>
+    <a {...props} style={serializeStyle(props.style)}>{children}</a>
   );
 
   const MockSpan = ({ children, ...props }: PropsWithChildren<HTMLAttributes<HTMLSpanElement>>) => (
@@ -58,6 +86,20 @@ describe('StickyHeader Component', () => {
     <O>(value: MotionValue<number>, input: number[], output: O[]): MotionValue<O>;
   };
 
+  const resolveTransformValue = <O,>(source: number, input: number[], output: O[]) => {
+    if (source <= input[0]) {
+      return output[0];
+    }
+
+    for (let i = 1; i < input.length; i += 1) {
+      if (source <= input[i]) {
+        return output[i];
+      }
+    }
+
+    return output[output.length - 1];
+  };
+
   beforeEach(() => {
     vi.resetAllMocks();
     window.history.replaceState(null, '', '/');
@@ -69,8 +111,8 @@ describe('StickyHeader Component', () => {
     } as unknown as ReturnType<typeof useScroll>);
 
     // Mock useTransform to return the output values
-    const useTransformRange: MockUseTransform = (_value, _input, output) =>
-      createMockMotionValue(output[0]) as unknown as MotionValue<(typeof output)[number]>;
+    const useTransformRange: MockUseTransform = (value, input, output) =>
+      createMockMotionValue(resolveTransformValue(value.get(), input, output)) as unknown as MotionValue<(typeof output)[number]>;
 
     vi.mocked(useTransform).mockImplementation(
       useTransformRange as unknown as typeof useTransform,
@@ -80,52 +122,115 @@ describe('StickyHeader Component', () => {
     vi.mocked(useActiveSection).mockReturnValue(null);
   });
 
-  it('updates hash to #faq when clicking Preguntas navigation', () => {
+  it('renders semantic same-page links for internal navigation', () => {
+    render(<StickyHeader />);
+
+    expect(screen.getByRole('link', { name: /Ficha Técnica/i })).toHaveAttribute('href', '#specs');
+    expect(screen.getByRole('link', { name: /Confianza/i })).toHaveAttribute('href', '#trust');
+    expect(screen.getByRole('link', { name: /Preguntas/i })).toHaveAttribute('href', '#faq');
+  });
+
+  it('exposes visible-focus utility classes on header navigation links', () => {
+    render(<StickyHeader />);
+
+    const specs = screen.getByRole('link', { name: /Ficha Técnica/i });
+    specs.focus();
+
+    expect(document.activeElement).toBe(specs);
+    expect(specs.className).toContain('focus-visible:outline-2');
+    expect(specs.className).toContain('focus-visible:outline-offset-2');
+  });
+
+  it('moves focus to destination when navigation is programmatic', () => {
     const faqSection = document.createElement('section');
     faqSection.id = 'faq';
     faqSection.scrollIntoView = vi.fn();
     document.body.appendChild(faqSection);
 
     render(<StickyHeader />);
-    fireEvent.click(screen.getByRole('button', { name: /Preguntas/i }));
+    const link = screen.getByRole('link', { name: /Preguntas/i });
+    fireEvent.click(link);
 
     expect(window.location.hash).toBe('#faq');
-    expect(faqSection.scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth' });
+    expect(faqSection).toHaveAttribute('tabindex', '-1');
+    expect(document.activeElement).toBe(faqSection);
 
     faqSection.remove();
   });
 
-  it('renders active section link label when section state is specs', () => {
+  it('highlights only the active section from hook output', () => {
     vi.mocked(useActiveSection).mockReturnValue('specs');
     render(<StickyHeader />);
 
-    expect(screen.getByRole('button', { name: /Ficha Técnica/i })).toBeInTheDocument();
+    const specs = screen.getByRole('link', { name: /Ficha Técnica/i });
+    const trust = screen.getByRole('link', { name: /Confianza/i });
+    const faq = screen.getByRole('link', { name: /Preguntas/i });
+
+    expect(specs.className).toContain('text-[#A855F7]');
+    expect(trust.className).toContain('text-slate-600');
+    expect(faq.className).toContain('text-slate-600');
   });
 
-  it('renders a progress bar', () => {
+  it('does not highlight any navigation item when hook returns null', () => {
+    vi.mocked(useActiveSection).mockReturnValue(null);
     render(<StickyHeader />);
-    expect(screen.getByTestId('progress-bar')).toBeInTheDocument();
+
+    const navButtons = [
+      screen.getByRole('link', { name: /Ficha Técnica/i }),
+      screen.getByRole('link', { name: /Confianza/i }),
+      screen.getByRole('link', { name: /Preguntas/i }),
+    ];
+
+    navButtons.forEach((button) => {
+      const classTokens = button.className.split(/\s+/);
+      expect(button.className).toContain('text-slate-600');
+      expect(classTokens).not.toContain('text-[#A855F7]');
+    });
   });
 
-  it('shows the price when scrolling deep (mocked visible)', () => {
+  it('renders progress bar with scroll-derived scale', () => {
+    vi.mocked(useScroll).mockReturnValue({
+      scrollY: createMockMotionValue(200),
+      scrollYProgress: createMockMotionValue(0.2),
+    } as unknown as ReturnType<typeof useScroll>);
+
+    render(<StickyHeader />);
+    expect(screen.getByTestId('progress-bar')).toHaveStyle({ transform: 'scaleX(0.2)' });
+  });
+
+  it('shows product and CTA when scrolling deep', () => {
+    vi.mocked(useScroll).mockReturnValue({
+      scrollY: createMockMotionValue(200),
+      scrollYProgress: createMockMotionValue(0.2),
+    } as unknown as ReturnType<typeof useScroll>);
+
     render(<StickyHeader />);
     expect(screen.getByText(siteConfig.sale.productName)).toBeInTheDocument();
     expect(screen.getByText(siteConfig.sale.price)).toBeInTheDocument();
+
+    const cta = screen.getByRole('link', { name: /Contactar/i });
+    expect(cta).toHaveStyle({ opacity: '1', scale: '1' });
+  });
+
+  it('keeps hidden CTA out of keyboard focus when not visible', () => {
+    render(<StickyHeader />);
+    const cta = screen.getByText('Contactar').closest('a') as HTMLAnchorElement;
+    expect(cta).toBeInTheDocument();
+    expect(cta).toHaveAttribute('tabindex', '-1');
+    expect(cta).toHaveAttribute('aria-hidden', 'true');
   });
 
   it('is not visible initially (at scroll 0)', () => {
     render(<StickyHeader />);
     const header = screen.getByRole('navigation');
-    // We expect opacity 0 or similar logic. 
-    // In TDD we reference the component which doesn't exist yet.
-    expect(header).toBeInTheDocument();
+    expect(header).toHaveStyle({ opacity: '0' });
   });
 
-  it('contains navigation links', () => {
+  it('calls useActiveSection with canonical section ids only', () => {
     render(<StickyHeader />);
-    expect(screen.getByText(/Ficha Técnica/i)).toBeInTheDocument();
-    expect(screen.getByText(/Confianza/i)).toBeInTheDocument();
-    expect(screen.getByText(/Preguntas/i)).toBeInTheDocument();
+
+    expect(useActiveSection).toHaveBeenCalledWith(['config', 'specs', 'trust', 'faq']);
+    expect(useActiveSection).toHaveBeenCalledTimes(1);
   });
 
   it('updates transform based on scroll', () => {
@@ -137,8 +242,6 @@ describe('StickyHeader Component', () => {
 
     render(<StickyHeader />);
     const header = screen.getByRole('navigation');
-    // In our mock, opacity will be output[0] if not explicitly handled, 
-    // but here we just verify it renders with the scroll value.
-    expect(header).toBeInTheDocument();
+    expect(header).toHaveStyle({ opacity: '1' });
   });
 });

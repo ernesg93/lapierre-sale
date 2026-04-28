@@ -4,6 +4,25 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import FAQ from '../FAQ';
 
 describe('FAQ Component', () => {
+  const firstQuestion = '¿Ha tenido caídas o reparaciones estructurales?';
+  const secondQuestion = '¿Por qué la vendes con menos de 1 año?';
+
+  const getQuestionButton = (label: string) => screen.getByRole('button', { name: label });
+
+  const getControlledPanel = (button: HTMLElement) => {
+    const panelId = button.getAttribute('aria-controls');
+    if (!panelId) {
+      throw new Error('Expected question button to define aria-controls');
+    }
+
+    const panel = document.getElementById(panelId);
+    if (!panel) {
+      throw new Error(`Expected panel with id ${panelId} to exist`);
+    }
+
+    return panel;
+  };
+
   it('exposes exactly one visible faq anchor destination', () => {
     const { container } = render(<FAQ />);
     const faqAnchors = container.querySelectorAll('section#faq');
@@ -27,52 +46,52 @@ describe('FAQ Component', () => {
     expect(questionButtons).toHaveLength(3);
     questionButtons.forEach((button) => {
       expect(button).toHaveAttribute('aria-expanded', 'false');
+      expect(button).toHaveAttribute('aria-controls');
+      const panel = getControlledPanel(button);
+      expect(panel).toBeInTheDocument();
+      expect(panel).toHaveAttribute('hidden');
     });
   });
 
   it('toggles an answer when a question is clicked', () => {
     render(<FAQ />);
-    const question = screen.getByText('¿Ha tenido caídas o reparaciones estructurales?');
-    const button = question.closest('button');
-    
-    if (!button) throw new Error('Question button not found');
+    const button = getQuestionButton(firstQuestion);
+    const panel = getControlledPanel(button);
 
-    // Click to open
     fireEvent.click(button);
     expect(button).toHaveAttribute('aria-expanded', 'true');
-    
-    // The container for the answer is the parent of the paragraph
-    const answerText = screen.getByText(/cuadro jamás tocó el asfalto/);
-    const container = answerText.closest('.grid.transition-all');
-    
-    expect(container).toHaveClass('grid-rows-[1fr]');
-    expect(container).toHaveClass('opacity-100');
+    expect(panel).not.toHaveAttribute('hidden');
+    expect(panel).toContainElement(screen.getByText(/cuadro jamás tocó el asfalto/i));
 
-    // Click again to close
     fireEvent.click(button);
     expect(button).toHaveAttribute('aria-expanded', 'false');
+    expect(panel).toHaveAttribute('hidden');
   });
 
   it('only allows one answer to be open at a time (exclusive toggle)', () => {
     render(<FAQ />);
-    const questions = [
-      screen.getByText('¿Ha tenido caídas o reparaciones estructurales?'),
-      screen.getByText('¿Por qué la vendes con menos de 1 año?')
-    ];
-    
-    const buttons = questions.map(q => q.closest('button')!);
+    const firstButton = getQuestionButton(firstQuestion);
+    const secondButton = getQuestionButton(secondQuestion);
 
-    // Open first
-    fireEvent.click(buttons[0]);
-    const firstAnswer = screen.getByText(/cuadro jamás tocó el asfalto/).closest('.grid.transition-all');
-    expect(firstAnswer).toHaveClass('grid-rows-[1fr]');
+    fireEvent.click(firstButton);
+    expect(firstButton).toHaveAttribute('aria-expanded', 'true');
+    expect(secondButton).toHaveAttribute('aria-expanded', 'false');
 
-    // Open second
-    fireEvent.click(buttons[1]);
-    const secondAnswer = screen.getByText(/cambio de disciplina/).closest('.grid.transition-all');
-    
-    expect(secondAnswer).toHaveClass('grid-rows-[1fr]');
-    // First one should now be closed
-    expect(firstAnswer).toHaveClass('grid-rows-[0fr]');
+    fireEvent.click(secondButton);
+    expect(secondButton).toHaveAttribute('aria-expanded', 'true');
+    expect(firstButton).toHaveAttribute('aria-expanded', 'false');
+
+    expect(getControlledPanel(secondButton)).toContainElement(screen.getByText(/cambio de disciplina/i));
+  });
+
+  it('keeps FAQ toggles keyboard-focusable with visible-focus utilities', () => {
+    render(<FAQ />);
+    const firstButton = getQuestionButton(firstQuestion);
+
+    firstButton.focus();
+
+    expect(document.activeElement).toBe(firstButton);
+    expect(firstButton.className).toContain('focus-visible:outline-2');
+    expect(firstButton.className).toContain('focus-visible:outline-offset-2');
   });
 });

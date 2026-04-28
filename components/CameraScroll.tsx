@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { useScroll, useTransform, motion } from "framer-motion";
+import { useScroll, useTransform, motion, useReducedMotion } from "framer-motion";
 import { whatsappUrl, siteConfig } from "@/src/config/site";
+import { navigateToSection } from "@/src/utils/sectionNavigation";
 
 export default function CameraScroll() {
   const [loadedImages, setLoadedImages] = useState<HTMLImageElement[]>([]);
@@ -121,6 +122,7 @@ export function calculateImageDrawProps(canvasWidth: number, canvasHeight: numbe
 // Componente separado para que useScroll siempre encuentre su target ref montado en el DOM
 function CameraScrollContent({ loadedImages }: { loadedImages: HTMLImageElement[] }) {
   const sale = siteConfig.sale;
+  const shouldReduceMotion = useReducedMotion();
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -196,10 +198,45 @@ function CameraScrollContent({ loadedImages }: { loadedImages: HTMLImageElement[
   const op4 = useTransform(scrollYProgress, [0.85, 0.90, 1, 1], [0, 1, 1, 1]);
   const y4 = useTransform(scrollYProgress, [0.85, 1], [20, 0]);
 
-  const scrollToSection = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  const goToSection = (id: "config" | "specs") => {
+    navigateToSection(id, { updateHash: true, smooth: !shouldReduceMotion, focusTarget: true });
   };
+
+  if (shouldReduceMotion) {
+    return (
+      <section data-testid="reduced-motion-hero" className="w-full bg-[#F8FAFC] py-28 border-b border-slate-200">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <h1 className="text-4xl md:text-6xl font-bold text-slate-900 tracking-tight mb-4">
+            {sale.productName}
+          </h1>
+          <p className="text-lg md:text-xl text-slate-600 mb-8 text-balance">
+            {sale.hero.claims.join(" | ")}
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Contactar por WhatsApp sobre la ${sale.productName}`}
+              className="px-8 py-4 bg-[#A855F7] hover:bg-[#9333EA] text-white rounded-full font-semibold transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A855F7]"
+            >
+              Contactar por WhatsApp
+            </a>
+            <a
+              href="#specs"
+              onClick={(event) => {
+                event.preventDefault();
+                goToSection("specs");
+              }}
+              className="px-8 py-4 bg-white hover:bg-slate-50 text-slate-900 rounded-full font-semibold border border-slate-200 transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400"
+            >
+              Ver ficha técnica
+            </a>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     // Contenedor súper alto para que haya scroll suficiente
@@ -225,12 +262,16 @@ function CameraScrollContent({ loadedImages }: { loadedImages: HTMLImageElement[
               {sale.hero.claims.join(' | ')}
             </p>
             <div className="pointer-events-auto">
-              <button 
-                onClick={() => scrollToSection('config')}
+              <a
+                href="#config"
+                onClick={(event) => {
+                  event.preventDefault();
+                  goToSection("config");
+                }}
                 className="text-[#A855F7] font-semibold hover:text-[#9333EA] transition-colors relative after:absolute after:-bottom-1 after:left-0 after:w-full after:h-[2px] after:bg-[#A855F7] after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:origin-left"
               >
                 Ver configuración →
-              </button>
+              </a>
             </div>
           </div>
         </motion.div>
@@ -275,12 +316,18 @@ function CameraScrollContent({ loadedImages }: { loadedImages: HTMLImageElement[
             >
               Contactar por WhatsApp
             </a>
-            <button 
-              onClick={() => scrollToSection('specs')}
+            <a
+              href="#specs"
+              onClick={(event) => {
+                event.preventDefault();
+                goToSection("specs");
+              }}
+              tabIndex={op4.get() <= 0 ? -1 : 0}
+              aria-hidden={op4.get() <= 0}
               className="px-8 py-4 bg-white hover:bg-slate-50 text-slate-900 rounded-full font-semibold border border-slate-200 transition-all hover:shadow-md focus:outline-none focus:ring-4 focus:ring-slate-200"
             >
               Ver ficha técnica
-            </button>
+            </a>
           </div>
         </motion.div>
 
