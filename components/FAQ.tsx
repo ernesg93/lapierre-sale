@@ -26,7 +26,7 @@ export default function FAQ() {
   };
 
   return (
-    <section id="faq" className="py-24 bg-[#F8FAFC] border-t border-slate-200 w-full">
+    <section id="faq" className="scroll-mt-24 py-24 bg-[#F8FAFC] border-t border-slate-200 w-full">
       <div className="max-w-3xl mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-4 tracking-tight">Preguntas Frecuentes</h2>

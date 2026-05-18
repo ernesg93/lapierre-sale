@@ -13,7 +13,7 @@ export default function TechSpecs() {
   ];
 
   return (
-    <section id="specs" className="py-24 bg-[#F8FAFC] border-t border-slate-200 w-full">
+    <section id="specs" className="scroll-mt-24 py-24 bg-[#F8FAFC] border-t border-slate-200 w-full">
       <div className="max-w-4xl mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-4 tracking-tight">Ficha Técnica</h2>

@@ -77,7 +77,14 @@ export default function CameraScroll() {
   if (loadingProgress < 100) {
     return (
       <div className="h-screen w-full flex flex-col items-center justify-center bg-[#F8FAFC]">
-        <div className="w-64 h-1 bg-slate-200 rounded-full overflow-hidden mb-4">
+        <div
+          className="w-64 h-1 bg-slate-200 rounded-full overflow-hidden mb-4"
+          role="progressbar"
+          aria-label="Progreso de carga de la experiencia"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={loadingProgress}
+        >
           <div 
             className="h-full bg-[#A855F7] transition-all duration-300 ease-out" 
             style={{ width: `${loadingProgress}%` }}
