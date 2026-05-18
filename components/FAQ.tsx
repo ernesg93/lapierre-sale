@@ -14,7 +14,7 @@ const faqs = [
   },
   {
     question: "¿Qué incluye exactamente el pack de accesorios?",
-    answer: "Si optas por el pack te llevas: Pedales automáticos Shimano (valorados en ~50€), 2 portabidones Élite ligeros, un bolso de sillín de herramientas basico y las luces recargables delantera y trasera. Un 'ready-to-ride' literal."
+    answer: "Si optás por el pack te llevás: pedales automáticos Shimano, 2 portabidones Élite ligeros, un bolso de sillín de herramientas básico y las luces recargables delantera y trasera. Un 'ready-to-ride' literal."
   }
 ];
 
