@@ -7,8 +7,14 @@ import { describe, expect, it } from 'vitest';
 
 const repoRoot = process.cwd();
 
-const apiChangeRoot = path.join(repoRoot, 'openspec/changes/api-and-doc-consistency');
-const historicalChangeRoot = path.join(repoRoot, 'openspec/changes/test-hardening-and-coverage');
+const apiChangeRoot = path.join(
+  repoRoot,
+  'openspec/changes/archive/2026-04-28-api-and-doc-consistency'
+);
+const historicalChangeRoot = path.join(
+  repoRoot,
+  'openspec/changes/archive/2026-04-28-test-hardening-and-coverage'
+);
 
 const apiChangeTasksPath = path.join(apiChangeRoot, 'tasks.md');
 const apiChangeApplyPath = path.join(apiChangeRoot, 'apply-progress.md');

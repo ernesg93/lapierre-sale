@@ -20,11 +20,11 @@ const packageJsonPath = path.join(repoRoot, 'package.json');
 const manifestPath = path.join(repoRoot, 'public/frames/manifest.json');
 const tasksPath = path.join(
   repoRoot,
-  'openspec/changes/generated-assets-governance/tasks.md'
+  'openspec/changes/archive/2026-04-28-generated-assets-governance/tasks.md'
 );
 const applyProgressPath = path.join(
   repoRoot,
-  'openspec/changes/generated-assets-governance/apply-progress.md'
+  'openspec/changes/archive/2026-04-28-generated-assets-governance/apply-progress.md'
 );
 const runNpmScript = (scriptName: 'predev' | 'prebuild') => {
   const shellPath = process.platform === 'win32' ? 'cmd.exe' : '/bin/sh';
