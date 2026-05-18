@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import React, { useState } from "react";
+import { motion, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
 import { siteConfig, whatsappUrl } from "@/src/config/site";
 import useActiveSection from "@/hooks/useActiveSection";
 import { navigateToSection, type SectionTargetId } from "@/src/utils/sectionNavigation";
@@ -23,6 +23,11 @@ export default function StickyHeader() {
   // En un componente real usaríamos un listener o un hook, 
   // aquí lo simplificamos para que framer maneje la visibilidad
   const showCTA = useTransform(scrollYProgress, [0, 0.15, 0.16], [0, 0, 1]);
+  const [isCTAVisible, setIsCTAVisible] = useState(() => showCTA.get() > 0);
+
+  useMotionValueEvent(showCTA, "change", (latest) => {
+    setIsCTAVisible(latest > 0);
+  });
 
   const goToSection = (id: SectionTargetId) => {
     navigateToSection(id, { focusTarget: true, smooth: true, updateHash: true });
@@ -97,8 +102,8 @@ export default function StickyHeader() {
               target="_blank"
               rel="noopener noreferrer"
               style={{ opacity: showCTA, scale: showCTA }}
-              tabIndex={showCTA.get() <= 0 ? -1 : 0}
-              aria-hidden={showCTA.get() <= 0}
+              tabIndex={isCTAVisible ? 0 : -1}
+              aria-hidden={!isCTAVisible}
               className="px-4 py-2 bg-[#A855F7] hover:bg-[#9333EA] text-white text-xs sm:text-sm font-bold rounded-xl transition-all shadow-md hover:shadow-purple-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A855F7]"
             >
               Contactar

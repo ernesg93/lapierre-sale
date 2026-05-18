@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { useScroll, useTransform, motion, useReducedMotion } from "framer-motion";
+import { useScroll, useTransform, motion, useReducedMotion, useMotionValueEvent } from "framer-motion";
 import { whatsappUrl, siteConfig } from "@/src/config/site";
 import { navigateToSection } from "@/src/utils/sectionNavigation";
 
@@ -197,6 +197,11 @@ function CameraScrollContent({ loadedImages }: { loadedImages: HTMLImageElement[
 
   const op4 = useTransform(scrollYProgress, [0.85, 0.90, 1, 1], [0, 1, 1, 1]);
   const y4 = useTransform(scrollYProgress, [0.85, 1], [20, 0]);
+  const [isFinalOverlayVisible, setIsFinalOverlayVisible] = useState(() => op4.get() > 0);
+
+  useMotionValueEvent(op4, "change", (latest) => {
+    setIsFinalOverlayVisible(latest > 0);
+  });
 
   const goToSection = (id: "config" | "specs") => {
     navigateToSection(id, { updateHash: true, smooth: !shouldReduceMotion, focusTarget: true });
@@ -322,8 +327,8 @@ function CameraScrollContent({ loadedImages }: { loadedImages: HTMLImageElement[
                 event.preventDefault();
                 goToSection("specs");
               }}
-              tabIndex={op4.get() <= 0 ? -1 : 0}
-              aria-hidden={op4.get() <= 0}
+              tabIndex={isFinalOverlayVisible ? 0 : -1}
+              aria-hidden={!isFinalOverlayVisible}
               className="px-8 py-4 bg-white hover:bg-slate-50 text-slate-900 rounded-full font-semibold border border-slate-200 transition-all hover:shadow-md focus:outline-none focus:ring-4 focus:ring-slate-200"
             >
               Ver ficha técnica
