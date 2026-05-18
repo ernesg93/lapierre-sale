@@ -6,11 +6,6 @@ import { siteConfig, whatsappUrl } from '@/src/config/site';
 export default function Footer() {
   const sale = siteConfig.sale;
 
-  const scrollTo = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
-  };
-
   return (
     <footer className="bg-slate-900 text-slate-300 py-16 border-t border-slate-800">
       <div className="max-w-6xl mx-auto px-6">
@@ -37,9 +32,9 @@ export default function Footer() {
           <div>
             <h3 className="text-white font-semibold mb-4 text-lg">Navegación</h3>
             <ul className="space-y-3">
-              <li><button onClick={() => scrollTo('config')} className="hover:text-white transition-colors">Configuración</button></li>
-              <li><button onClick={() => scrollTo('specs')} className="hover:text-white transition-colors">Ficha Técnica</button></li>
-              <li><button onClick={() => scrollTo('trust')} className="hover:text-white transition-colors">Confianza</button></li>
+              <li><a href="#config" className="hover:text-white transition-colors">Configuración</a></li>
+              <li><a href="#specs" className="hover:text-white transition-colors">Ficha Técnica</a></li>
+              <li><a href="#trust" className="hover:text-white transition-colors">Confianza</a></li>
             </ul>
           </div>
 

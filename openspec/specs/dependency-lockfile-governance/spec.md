@@ -8,7 +8,7 @@ Definir un criterio explícito y verificable para aceptar o revertir cambios en 
 
 ### Requirement: Incidental lockfile churn MUST be reverted
 
-The system governance SHALL treat `package-lock.json` as valid in a change only when dependency intent is explicit; incidental churn MUST be reverted before merge.
+The system governance SHALL treat `package-lock.json` and explicitly governed generated artifacts as valid in a change only when intent is explicit; incidental churn MUST be reverted or neutralized by policy before merge.
 
 #### Scenario: Lockfile change accepted with explicit dependency intent
 
@@ -21,4 +21,11 @@ The system governance SHALL treat `package-lock.json` as valid in a change only 
 - GIVEN a change does not include intentional dependency updates
 - WHEN `package-lock.json` appears modified incidentally
 - THEN that lockfile diff MUST be reverted before merge
+- AND review notes MUST classify it as incidental churn
+
+#### Scenario: Governed generated artifact churn rejected without intent
+
+- GIVEN a change does not include intentional updates for a governed generated artifact
+- WHEN that artifact appears as incidental diff during review
+- THEN the artifact diff MUST be removed from tracking or covered by ignore policy before merge
 - AND review notes MUST classify it as incidental churn

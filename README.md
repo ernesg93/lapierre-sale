@@ -21,11 +21,30 @@ El proyecto es un punto de venta interactivo ("one-page sale") para una biciclet
 ### ⚠️ Pre-requisito Crítico: El Manifest
 La animación principal usa *scrollytelling* con más de 100 imágenes (`/frames/`). Para evitar indexar o hardcodear urls en código, el proyecto tiene un script que genera dinámicamente un `manifest.json`.
 
-**Antes de levantar el entorno local, debes correr**:
+`public/frames/manifest.json` es un artefacto **generado** (no versionado) y se reconstruye automáticamente en los flujos soportados.
+
+### ✅ Flujos soportados (obligatorios)
+
+Usá siempre estos comandos:
+
+```bash
+npm run dev
+npm run build
+```
+
+Ambos ejecutan `predev` / `prebuild` antes de correr Next, garantizando que el manifest exista antes del consumo runtime.
+
+### ⚠️ Riesgo de bypass y recuperación
+
+Si corrés `next dev` directo (sin `npm run dev`), podés bypasséar la generación y dejar el manifest ausente.
+
+Recovery path:
+
 ```bash
 npm run predev
 ```
-_(Este script está empaquetado en el comando `dev` base, pero si faltan imágenes, asegurate de correrlo)._
+
+Luego continuá con `npm run dev`.
 
 ### Entorno de Desarrollo
 ```bash

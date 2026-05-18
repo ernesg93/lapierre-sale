@@ -35,11 +35,11 @@ describe('Footer Component', () => {
     expect(links[1]).toHaveAttribute('href', buildWhatsAppUrl());
   });
 
-  it('renders navigation buttons', () => {
+  it('renders semantic same-page navigation links', () => {
     render(<Footer />);
-    expect(screen.getByText('Configuración')).toBeInTheDocument();
-    expect(screen.getByText('Ficha Técnica')).toBeInTheDocument();
-    expect(screen.getByText('Confianza')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Configuración' })).toHaveAttribute('href', '#config');
+    expect(screen.getByRole('link', { name: 'Ficha Técnica' })).toHaveAttribute('href', '#specs');
+    expect(screen.getByRole('link', { name: 'Confianza' })).toHaveAttribute('href', '#trust');
   });
 
   it('renders the legal notice', () => {

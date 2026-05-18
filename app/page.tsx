@@ -5,10 +5,12 @@ import TechSpecs from "@/components/TechSpecs";
 import TrustSection from "@/components/TrustSection";
 import FAQ from "@/components/FAQ";
 import Footer from "@/components/Footer";
+import SkipToMainLink from "@/components/SkipToMainLink";
 
 export default function Home() {
   return (
-    <main className="relative min-h-screen bg-white">
+    <main id="main-content" className="relative min-h-screen bg-white" tabIndex={-1}>
+      <SkipToMainLink />
       <StickyHeader />
       <CameraScroll />
       <PurchaseConfig />

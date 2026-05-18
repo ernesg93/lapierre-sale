@@ -1,37 +1,31 @@
 # Pruebas y Aseguramiento de Calidad
 
-Este proyecto se rige por un esquema moderno propulsado por **Vitest** en combinación con **React Testing Library** integrados con los plugins asíncronos propios de Vite. 
+Este proyecto usa **Vitest + React Testing Library** con entorno **jsdom**.
 
-## Entorno Local
-1. Simulación nativa: Emplea *jsdom* para el aislamiento total de cada prueba.
-2. Ejecución paralela pura: Ideal para Continuous Integration, Vitest consume configuraciones idénticas a la aplicación sin necesidad del overhead que generaría correr Next.js nativamente.
+## Comandos oficiales
 
-### Corriendo las pruebas
-
-Para ejecutar el test-suite:
 ```bash
-npm run test:run
+npm run lint
+npx tsc --noEmit
+npm test
+npm run test:run -- --coverage
 ```
 
-Para ingresar al modo watcher interactivo de UI (Ideal para fases de desarrollo puro):
-```bash
-npm run test:ui
-```
+- `npm test`: flujo por defecto sin coverage (watch/local loop).
+- `npm run test:run -- --coverage`: ejecución determinística con reporte de cobertura (`text`, `json-summary`, `html`).
 
----
+## Política de cobertura (baseline inicial)
 
-## Strict TDD Mode ✅
+Los thresholds iniciales están fijados en `vitest.config.mts` con piso redondeado hacia abajo desde la primera corrida verde de coverage:
 
-El equipo que desarrolló el proyecto tiene activada la directriz de **Test-Driven Development Estricto**. 
+- **Lines**: 86
+- **Statements**: 83
+- **Functions**: 82
+- **Branches**: 69
 
-### Protocolo: 
-Si a futuro es necesaria la construcción de una característica algorítmica compleja, se debe seguir de esta manera:
-1. Las Specs (Especificaciones del producto) obligan la escritura del test fallido en `__tests__`
-2. Elaboración del Código que cumple dicho Test
-3. Refactorización para estándares de Next.js
-4. Juicio Final (Adversarial review - ver `SKILL.md / judgment-day`)
+Esta baseline es el piso operativo actual. Se puede subir en cambios futuros, pero no dejar implícita ni sin documentación.
 
-## Cobertura
+## No objetivos de esta suite
 
-Mantenemos en la mira las funcionalidades transaccionales obligatorias de la aplicación.
-Ej. Opciones de entrega, Renderización base y los Puntos de Call to Action (Vínculos vitales formales).
+En `jsdom` **NO** se valida comportamiento visual/canvas del pipeline de scrollytelling (por ejemplo `HTMLCanvasElement.getContext`).
+Los tests cubren contrato funcional y accesible (navegación, composición crítica y estados de interacción), no fidelity visual.

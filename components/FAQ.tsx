@@ -47,13 +47,14 @@ export default function FAQ() {
                   onClick={() => toggle(idx)}
                   aria-expanded={isOpen}
                   aria-controls={`faq-answer-${idx}`}
-                  className="w-full px-6 py-5 text-left flex items-center justify-between focus:outline-none"
+                  className="w-full px-6 py-5 text-left flex items-center justify-between focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A855F7]"
                 >
                   <span className="text-lg font-semibold text-slate-900">{faq.question}</span>
                   <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform ${isOpen ? 'rotate-180 text-[#A855F7]' : ''}`} />
                 </button>
                 <div 
                   id={`faq-answer-${idx}`}
+                  hidden={!isOpen}
                   className={`grid transition-all duration-300 ease-in-out ${isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}
                 >
                   <div className="overflow-hidden">
