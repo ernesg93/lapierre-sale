@@ -10,7 +10,7 @@ export default function PurchaseConfig() {
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-4 tracking-tight">Opciones de Entrega</h2>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-            Llevatela pelada o armate un pack con los accesorios que ya están probados en este cuadro.
+            Llevátela pelada o armate un pack con los accesorios que ya están probados en este cuadro.
           </p>
         </div>
 

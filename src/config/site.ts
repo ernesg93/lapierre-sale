@@ -51,11 +51,11 @@ const specs: SaleConfig['specs'] = {
 
 const sale: SaleConfig = {
   productName: 'Lapierre Híbrida Carbono',
-  price: '€ 3.200',
+  price: 'USD 850 ref.',
   metadata: {
     title: 'Lapierre Híbrida Carbono | Venta Exclusiva',
     description:
-      'Oportunidad única: Lapierre con cuadro de carbono, Shimano GRX hidráulico y ruedas DT Swiss GR 1600. Menos de 500km de uso. Gama Gravel & Urbano.',
+      'Oportunidad única: Lapierre con cuadro de carbono, Shimano GRX hidráulico y ruedas DT Swiss GR 1600. Menos de 500km de uso. Venta desde USD 800.',
     ogImage: '/frames/frame-01.webp',
   },
   hero: {
@@ -78,15 +78,15 @@ const sale: SaleConfig = {
     {
       id: 'base',
       title: 'Solo Bici',
-      price: '1.200€',
+      price: 'USD 800',
       description: 'Configuración estándar de serie.',
       highlight: false,
     },
     {
       id: 'pack',
       title: 'Pack Completo',
-      price: '1.350€',
-      badge: 'Ahorra 15€',
+      price: 'USD 850',
+      badge: 'Referencia',
       description:
         'Incluye pedales automáticos, 2 portabidones élite, bolsa de sillín y luces recargables.',
       highlight: true,
@@ -94,8 +94,8 @@ const sale: SaleConfig = {
     {
       id: 'custom',
       title: 'Accesorios por separado',
-      price: 'Desde 15€',
-      description: 'Elegí qué necesitas sumarle a la base y coordinamos el precio final.',
+      price: 'Desde USD 15',
+      description: 'Elegí qué necesitás sumarle a la base y coordinamos el precio final.',
       highlight: false,
     },
   ],
