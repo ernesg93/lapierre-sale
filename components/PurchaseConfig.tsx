@@ -5,7 +5,7 @@ export default function PurchaseConfig() {
   const configOptions = siteConfig.sale.purchaseOptions;
 
   return (
-    <section id="config" className="py-24 bg-white w-full">
+    <section id="config" className="scroll-mt-24 py-24 bg-white w-full">
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-4 tracking-tight">Opciones de Entrega</h2>

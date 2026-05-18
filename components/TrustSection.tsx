@@ -15,7 +15,7 @@ const badges: Badge[] = [
 
 export default function TrustSection() {
   return (
-    <section id="trust" className="py-24 md:py-32 bg-white w-full border-t border-slate-100">
+    <section id="trust" className="scroll-mt-24 py-24 md:py-32 bg-white w-full border-t border-slate-100">
       <div className="max-w-6xl mx-auto px-6">
         <div className="grid md:grid-cols-2 gap-16 items-center">
           
