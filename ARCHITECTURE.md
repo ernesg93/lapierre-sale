@@ -21,5 +21,7 @@ Mantenemos estricta separación estática de datos en componentes iteradores.
 - *Aviso*: Jamás inyectes JSX instanciado genéricamente en un Array (ej. `[ { icon: <MiIcon /> } ]`). Esto contamina la serialización y dificulta las pruebas.
 - *Solución*: La data aloja **referencias** al componente o metadatos (`[ { Icon: MiIcon } ]`), y React lo hidrata explícitamente en el DOM durante la fase Map.
 
-## Variables Globales de Flujo Libre 
-Los "puntos calientes" con lógica pesada expuesta (ej: URLs de conversión como el WhatsApp) están factorizados mediante Constantes a nivel de componente principal superior (`WHATSAPP_NUMBER`), forzando de forma robusta a que los parámetros internacionales (por ejemplo, sin "+") se cumplan a nivel estructural, no en cada inyección individual.
+## Configuración Comercial Centralizada
+Los "puntos calientes" de conversión (precio, opciones de venta, WhatsApp, metadata y mensajes pre-cargados) viven en `src/config/site.ts`.
+
+Esto evita que cada componente reconstruya reglas comerciales por separado y permite que tests y UI consuman una única fuente de verdad.
