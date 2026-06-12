@@ -5,17 +5,25 @@ import PurchaseConfig from '../PurchaseConfig';
 import * as siteModule from '@/src/config/site';
 
 describe('PurchaseConfig', () => {
-  it('renders the delivery options title', () => {
+  it('renders the single-bike conversation paths title', () => {
     render(<PurchaseConfig />);
-    expect(screen.getByText('Opciones de Entrega')).toBeInTheDocument();
+    expect(screen.getByText('Cómo avanzar con esta bici')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /tres formas directas de hablar por la misma lapierre pro race, con reserva directa o consultas sin costo\./i,
+      ),
+    ).toBeInTheDocument();
   });
 
-  it('renders all three base options', () => {
+  it('renders all three same-bike conversation paths', () => {
     render(<PurchaseConfig />);
 
     siteModule.siteConfig.sale.purchaseOptions.forEach((option) => {
       expect(screen.getByText(option.title)).toBeInTheDocument();
     });
+
+    expect(screen.getAllByText('$ 850')).toHaveLength(1);
+    expect(screen.getAllByText('FREE')).toHaveLength(2);
   });
 
   it('builds CTA whatsapp links from centralized base and dynamic messages', () => {
@@ -35,6 +43,7 @@ describe('PurchaseConfig', () => {
         'href',
         expect.stringContaining(`https://wa.me/${siteModule.siteConfig.whatsappNumber}`),
       );
+      expect(link).toHaveAttribute('href', expect.not.stringContaining('$ 850'));
     });
   });
 });

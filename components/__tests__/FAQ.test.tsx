@@ -4,8 +4,8 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import FAQ from '../FAQ';
 
 describe('FAQ Component', () => {
-  const firstQuestion = '¿Ha tenido caídas o reparaciones estructurales?';
-  const secondQuestion = '¿Por qué la vendes con menos de 1 año?';
+  const firstQuestion = '¿Qué uso tuvo esta Lapierre Pro Race?';
+  const secondQuestion = '¿Sirve para ciudad y terrenos mixtos?';
 
   const getQuestionButton = (label: string) => screen.getByRole('button', { name: label });
 
@@ -34,9 +34,9 @@ describe('FAQ Component', () => {
   it('renders the title and all questions', () => {
     render(<FAQ />);
     expect(screen.getByText('Preguntas Frecuentes')).toBeInTheDocument();
-    expect(screen.getByText('¿Ha tenido caídas o reparaciones estructurales?')).toBeInTheDocument();
-    expect(screen.getByText('¿Por qué la vendes con menos de 1 año?')).toBeInTheDocument();
-    expect(screen.getByText('¿Qué incluye exactamente el pack de accesorios?')).toBeInTheDocument();
+    expect(screen.getByText('¿Qué uso tuvo esta Lapierre Pro Race?')).toBeInTheDocument();
+    expect(screen.getByText('¿Sirve para ciudad y terrenos mixtos?')).toBeInTheDocument();
+    expect(screen.getByText('¿Cómo coordinamos si me interesa?')).toBeInTheDocument();
   });
 
   it('initially has all answers collapsed', () => {
@@ -61,7 +61,7 @@ describe('FAQ Component', () => {
     fireEvent.click(button);
     expect(button).toHaveAttribute('aria-expanded', 'true');
     expect(panel).not.toHaveAttribute('hidden');
-    expect(panel).toContainElement(screen.getByText(/cuadro jamás tocó el asfalto/i));
+    expect(panel).toContainElement(screen.getByText(/poco uso/i));
 
     fireEvent.click(button);
     expect(button).toHaveAttribute('aria-expanded', 'false');
@@ -81,7 +81,7 @@ describe('FAQ Component', () => {
     expect(secondButton).toHaveAttribute('aria-expanded', 'true');
     expect(firstButton).toHaveAttribute('aria-expanded', 'false');
 
-    expect(getControlledPanel(secondButton)).toContainElement(screen.getByText(/cambio de disciplina/i));
+    expect(getControlledPanel(secondButton)).toContainElement(screen.getByText(/ciudad y también para caminos mixtos/i));
   });
 
   it('keeps FAQ toggles keyboard-focusable with visible-focus utilities', () => {

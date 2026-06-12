@@ -41,61 +41,61 @@ type SaleConfig = {
 };
 
 const specs: SaleConfig['specs'] = {
-  frame: 'Carbono',
-  brakes: 'Shimano GRX Hidráulico',
-  wheels: 'DT Swiss GR 1600',
-  drivetrain: 'Shimano GRX',
-  condition: '8/10',
-  usage: '< 500km',
+  frame: 'Carbono, talle M (17")',
+  brakes: 'Shimano hidráulicos',
+  wheels: 'DT Swiss 29" con sistema Ratchet y Schwalbe Marathon Plus 622x50',
+  drivetrain: 'SRAM 1x10',
+  condition: 'Como nueva',
+  usage: 'Poco uso. Horquilla rígida de aluminio ultraliviana.',
 };
 
 const sale: SaleConfig = {
-  productName: 'Lapierre Híbrida Carbono',
-  price: 'USD 850 ref.',
+  productName: 'Lapierre Pro Race',
+  price: '$ 850',
   metadata: {
-    title: 'Lapierre Híbrida Carbono | Venta Exclusiva',
+    title: 'Lapierre Pro Race | Bici híbrida $ 850',
     description:
-      'Oportunidad única: Lapierre con cuadro de carbono, Shimano GRX hidráulico y ruedas DT Swiss GR 1600. Menos de 500km de uso. Venta desde USD 800.',
+      'Lapierre Pro Race en venta por $ 850: cuadro de carbono, rápida y liviana para ciudad y terrenos mixtos. Poco uso, como nueva y sin vueltas.',
     ogImage: '/frames/frame-01.webp',
   },
   hero: {
-    title: 'Lapierre Híbrida Carbono',
-    claims: ['Gravel & Urbano', '< 1 año', 'Estado 8/10'],
+    title: 'Lapierre Pro Race',
+    claims: ['Híbrida para ciudad y terrenos mixtos', 'Rápida, liviana y directa', 'Poco uso | como nueva'],
     detailLines: [
-      'Cuadro carbono.',
-      'Ruedas DT Swiss.',
-      'Frenos Shimano Hidráulicos.',
-      'Mantenimiento al día. Uso real, sin sorpresas.',
-      'Documentación original incluida.',
+      'Cuadro de carbono, talle M (17").',
+      'Horquilla rígida de aluminio ultraliviana y ruedas DT Swiss 29" con Ratchet.',
+      'Schwalbe Marathon Plus 622x50, SRAM 1x10 y frenos hidráulicos Shimano.',
+      'Una sola bici real, poco uso y lista para seguir rodando en ciudad, asfalto y caminos mixtos.',
+      'Está como nueva, con poco uso y publicada con información clara.',
     ],
   },
   footer: {
-    heading: 'Lapierre Híbrida Carbono',
-    blurb: 'Una bici espectacular esperando salir a rodar. Lista para entregar.',
-    primaryCtaLabel: 'Darle un nuevo hogar a esta Lapierre',
+    heading: 'Lapierre Pro Race',
+    blurb: 'Una sola Lapierre Pro Race, poco uso, como nueva y lista para seguir rodando.',
+    primaryCtaLabel: 'Hablar por esta Lapierre Pro Race',
   },
   purchaseOptions: [
     {
-      id: 'base',
-      title: 'Solo Bici',
-      price: 'USD 800',
-      description: 'Configuración estándar de serie.',
+      id: 'visit',
+      title: 'Quiero verla en persona',
+      price: 'FREE',
+      description: 'Coordinamos una visita para verla con calma y confirmar si es la bici indicada para vos.',
       highlight: false,
     },
     {
-      id: 'pack',
-      title: 'Pack Completo',
-      price: 'USD 850',
-      badge: 'Referencia',
+      id: 'reserve',
+      title: 'Quiero reservar esta bici',
+      price: '$ 850',
+      badge: 'Directo',
       description:
-        'Incluye pedales automáticos, 2 portabidones élite, bolsa de sillín y luces recargables.',
+        'Si ya te cierra, escribime y avanzamos por WhatsApp con el siguiente paso sobre esta misma Lapierre Pro Race.',
       highlight: true,
     },
     {
-      id: 'custom',
-      title: 'Accesorios por separado',
-      price: 'Desde USD 15',
-      description: 'Elegí qué necesitás sumarle a la base y coordinamos el precio final.',
+      id: 'ask',
+      title: 'Necesito hacer una consulta',
+      price: 'FREE',
+      description: 'Si querés confirmar talle, uso o cómo se siente en distintos terrenos, te respondo directo por WhatsApp.',
       highlight: false,
     },
   ],
@@ -123,7 +123,7 @@ export const siteConfig = {
   price: sale.price,
 
   /** Mensaje pre-cargado en WhatsApp al hacer click */
-  whatsappMessage: `Hola, tengo interés en la ${sale.productName}.`,
+  whatsappMessage: `Hola, me interesa la ${sale.productName}.`,
 
   // ─── Metadata del sitio ──────────────────────────────────────────────────
   name: sale.productName,
@@ -145,7 +145,7 @@ export function buildWhatsAppUrl(message: string = siteConfig.whatsappMessage): 
 }
 
 export function buildPurchaseMessage(optionTitle: string): string {
-  return `Hola, vi la ${siteConfig.sale.productName} en la web y me interesa la opción: ${optionTitle}.`;
+  return `Hola, vi la ${siteConfig.sale.productName} en la web y me interesa avanzar por: ${optionTitle}.`;
 }
 
 export function buildPurchaseWhatsAppUrl(optionTitle: string): string {

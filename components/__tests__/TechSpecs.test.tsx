@@ -37,8 +37,10 @@ describe('TechSpecs Component', () => {
   it('renders centralized condition and usage facts', () => {
     render(<TechSpecs />);
 
-    expect(screen.getByText(siteConfig.sale.specs.condition)).toBeInTheDocument();
-    expect(screen.getByText(siteConfig.sale.specs.usage)).toBeInTheDocument();
+    expect(screen.getByText('Como nueva')).toBeInTheDocument();
+    expect(screen.getByText(/Poco uso/)).toBeInTheDocument();
+    expect(screen.getByText(/horquilla rígida de aluminio ultraliviana/i)).toBeInTheDocument();
+    expect(screen.getByText(/schwalbe marathon plus 622x50/i)).toBeInTheDocument();
   });
 
   it('renders values from sale.specs even if sale.techSpecs drift', () => {

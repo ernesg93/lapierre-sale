@@ -7,10 +7,10 @@ interface Badge {
 }
 
 const badges: Badge[] = [
-  { Icon: ShieldCheck, title: "Factura original disponible" },
-  { Icon: Search,      title: "Nº de serie verificable" },
-  { Icon: Handshake,   title: "Prueba en zona pública" },
-  { Icon: CreditCard,  title: "Pago en efectivo o transferencia segura" },
+  { Icon: ShieldCheck, title: 'Una sola bici real, sin packs ni variantes' },
+  { Icon: Search, title: 'Poco uso y estado como nueva' },
+  { Icon: Handshake, title: 'La ves en persona y preguntás todo' },
+  { Icon: CreditCard, title: 'Coordinación directa por WhatsApp' },
 ];
 
 export default function TrustSection() {
@@ -24,14 +24,14 @@ export default function TrustSection() {
               Compra con <span className="text-[#A855F7]">Confianza</span>
             </h2>
             <p className="text-lg text-slate-600 mb-8 leading-relaxed">
-              Proceso 100% transparente. Entrego documentación original, factura con mis datos personales (comprobables) y permito cualquier revisión mecánica en taller de confianza antes de la entrega. Sin vueltas.
+              Esta venta es simple: una Lapierre Pro Race real, poco uso, como nueva y sin adornos. Si necesitás confirmar algo, lo hablamos directo antes de avanzar.
             </p>
             <div className="inline-flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-full px-6 py-3 shadow-sm">
               <span className="relative flex h-3 w-3">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
               </span>
-              <span className="text-sm font-semibold text-slate-700">Verificado para venta local</span>
+              <span className="text-sm font-semibold text-slate-700">Venta directa y transparente</span>
             </div>
           </div>
 

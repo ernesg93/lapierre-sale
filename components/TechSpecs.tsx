@@ -18,7 +18,7 @@ export default function TechSpecs() {
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-4 tracking-tight">Ficha Técnica</h2>
           <p className="text-lg text-slate-600">
-            Valores reales verificados. Fotos sin filtros. Cuadro de carbono Lapierre original.
+            Datos concretos de esta Lapierre Pro Race: híbrida, liviana y lista para ciudad, asfalto y terrenos mixtos.
           </p>
         </div>
 

@@ -5,17 +5,17 @@ import { ChevronDown } from 'lucide-react';
 
 const faqs = [
   {
-    question: "¿Ha tenido caídas o reparaciones estructurales?",
-    answer: "No, el cuadro jamás tocó el asfalto. La pintura original (sellada de fábrica) no interviene raspones y está a prueba de cualquier revisión. Las típicas marcas que pueda tener son exclusivamente de apoyarla o el sistema de candado."
+    question: '¿Qué uso tuvo esta Lapierre Pro Race?',
+    answer: 'Tuvo poco uso. Es una sola bici real, está como nueva y la idea es mostrarla tal cual para que sepas exactamente qué estás viendo.',
   },
   {
-    question: "¿Por qué la vendes con menos de 1 año?",
-    answer: "Principalmente por cambio de disciplina. Me pasé full a ruta y la bici está juntando polvo en la pieza, algo que es un pecado para este modelo. Quiero que alguien que le vaya a sacar el jugo urbano o en senderos la aproveche."
+    question: '¿Sirve para ciudad y terrenos mixtos?',
+    answer: 'Sí. Está planteada como una híbrida liviana, rápida para moverse en ciudad y también para caminos mixtos, asfalto y recorridos donde se agradece una bici ágil.',
   },
   {
-    question: "¿Qué incluye exactamente el pack de accesorios?",
-    answer: "Si optás por el pack te llevás: pedales automáticos Shimano, 2 portabidones Élite ligeros, un bolso de sillín de herramientas básico y las luces recargables delantera y trasera. Un 'ready-to-ride' literal."
-  }
+    question: '¿Cómo coordinamos si me interesa?',
+    answer: 'Me escribís por WhatsApp, te paso lo que quieras confirmar y coordinamos una visita o el siguiente paso sobre esta misma bici.',
+  },
 ];
 
 export default function FAQ() {

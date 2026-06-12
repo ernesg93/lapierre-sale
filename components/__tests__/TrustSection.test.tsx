@@ -12,14 +12,14 @@ describe('TrustSection Component', () => {
 
   it('renders the verification badge', () => {
     render(<TrustSection />);
-    expect(screen.getByText('Verificado para venta local')).toBeInTheDocument();
+    expect(screen.getByText('Venta directa y transparente')).toBeInTheDocument();
   });
 
   it('renders all trust badges', () => {
     render(<TrustSection />);
-    expect(screen.getByText('Factura original disponible')).toBeInTheDocument();
-    expect(screen.getByText('Nº de serie verificable')).toBeInTheDocument();
-    expect(screen.getByText('Prueba en zona pública')).toBeInTheDocument();
-    expect(screen.getByText('Pago en efectivo o transferencia segura')).toBeInTheDocument();
+    expect(screen.getByText('Una sola bici real, sin packs ni variantes')).toBeInTheDocument();
+    expect(screen.getByText('Poco uso y estado como nueva')).toBeInTheDocument();
+    expect(screen.getByText('La ves en persona y preguntás todo')).toBeInTheDocument();
+    expect(screen.getByText('Coordinación directa por WhatsApp')).toBeInTheDocument();
   });
 });

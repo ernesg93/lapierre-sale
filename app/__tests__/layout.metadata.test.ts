@@ -10,6 +10,11 @@ import { siteConfig } from '@/src/config/site';
 
 describe('layout metadata', () => {
   it('uses centralized sale title and description for SEO/OG/Twitter', () => {
+    expect(siteConfig.sale.metadata.title).toBe('Lapierre Pro Race | Bici híbrida $ 850');
+    expect(siteConfig.sale.metadata.description).toContain('Lapierre Pro Race');
+    expect(siteConfig.sale.metadata.description).toContain('$ 850');
+    expect(siteConfig.sale.metadata.description).toContain('como nueva');
+
     expect(metadata.title).toBe(siteConfig.sale.metadata.title);
     expect(metadata.description).toBe(siteConfig.sale.metadata.description);
 
@@ -20,6 +25,7 @@ describe('layout metadata', () => {
   });
 
   it('uses centralized sale identity for siteName and OG image', () => {
+    expect(siteConfig.sale.productName).toBe('Lapierre Pro Race');
     expect(metadata.openGraph?.siteName).toBe(siteConfig.sale.productName);
 
     const images = metadata.openGraph?.images;

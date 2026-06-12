@@ -8,9 +8,9 @@ export default function PurchaseConfig() {
     <section id="config" className="scroll-mt-24 py-24 bg-white w-full">
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-4 tracking-tight">Opciones de Entrega</h2>
+          <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-4 tracking-tight">Cómo avanzar con esta bici</h2>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-            Llevátela pelada o armate un pack con los accesorios que ya están probados en este cuadro.
+            Tres formas directas de hablar por la misma Lapierre Pro Race, con reserva directa o consultas sin costo.
           </p>
         </div>
 
@@ -48,7 +48,7 @@ export default function PurchaseConfig() {
                     : 'bg-slate-100 text-slate-800 hover:bg-slate-200 focus:ring-slate-200'
                 }`}
               >
-                Me interesa esta opción
+                Hablar por esta opción
               </a>
             </div>
           ))}
@@ -56,7 +56,7 @@ export default function PurchaseConfig() {
 
         <div className="mt-16 bg-slate-50 border border-slate-100 rounded-2xl p-6 text-center max-w-3xl mx-auto">
           <p className="text-slate-600 font-medium flex items-center justify-center gap-2">
-            <span className="text-xl">🤝</span> Prueba en persona coordinada | Pago seguro en entrega
+            <span className="text-xl">🤝</span> Venta directa entre particulares | Coordinación clara antes de avanzar
           </p>
         </div>
       </div>

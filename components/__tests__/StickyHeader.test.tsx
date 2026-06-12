@@ -206,7 +206,7 @@ describe('StickyHeader Component', () => {
 
     render(<StickyHeader />);
     expect(screen.getByText(siteConfig.sale.productName)).toBeInTheDocument();
-    expect(screen.getByText(siteConfig.sale.price)).toBeInTheDocument();
+    expect(screen.getByText('$ 850')).toBeInTheDocument();
 
     const cta = screen.getByRole('link', { name: /Contactar/i });
     expect(cta).toHaveStyle({ opacity: '1', scale: '1' });

@@ -41,7 +41,7 @@ export default function Footer() {
           {/* Contacto Directo */}
           <div>
             <h3 className="text-white font-semibold mb-4 text-lg">Contacto Directo</h3>
-            <p className="mb-2">¿Consultas sin compromiso?</p>
+            <p className="mb-2">¿Querés hablar por esta Lapierre Pro Race?</p>
             <a 
               href={whatsappUrl}
               target="_blank"
@@ -56,7 +56,7 @@ export default function Footer() {
           <div>
             <h3 className="text-white font-semibold mb-4 text-lg">Aviso Legal</h3>
             <p className="text-sm text-slate-500 leading-relaxed text-balance">
-              Venta entre particulares. Se entrega tal cual, con descripción veraz y fotos reales. Se recomienda revisión post-compra para total garantía del comprador. Una vez finalizada la venta, no se aceptan devoluciones.
+              Venta entre particulares de una sola Lapierre Pro Race. La bici se ofrece con descripción veraz, fotos reales y coordinación directa antes de avanzar. No se ofrece garantía comercial ni devoluciones después de concretada la venta.
             </p>
           </div>
 

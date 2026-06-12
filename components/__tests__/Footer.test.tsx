@@ -45,5 +45,6 @@ describe('Footer Component', () => {
   it('renders the legal notice', () => {
     render(<Footer />);
     expect(screen.getByText(/Venta entre particulares/)).toBeInTheDocument();
+    expect(screen.getByText(/venta entre particulares de una sola lapierre pro race/i)).toBeInTheDocument();
   });
 });
