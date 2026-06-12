@@ -17,6 +17,34 @@ vi.mock('framer-motion', async () => {
   };
 });
 
+// Shared Image mock factory. Default `new MockImage()` fires onload on src set
+// and simulates a properly decoded image (complete + naturalWidth > 0).
+// Pass `{ fail: true }` (or use the failing subclass) to fire onerror instead.
+class MockImage {
+  onload: () => void = () => {};
+  onerror: () => void = () => {};
+  decoding: string = 'async';
+  complete: boolean = false;
+  naturalWidth: number = 0;
+  private _fail: boolean;
+
+  constructor(options: { fail?: boolean } = {}) {
+    this._fail = options.fail ?? false;
+  }
+
+  set src(_value: string) {
+    setTimeout(() => {
+      if (this._fail) {
+        this.onerror();
+      } else {
+        this.complete = true;
+        this.naturalWidth = 1;
+        this.onload();
+      }
+    }, 0);
+  }
+}
+
 describe('CameraScroll Component', () => {
   type MockMotionValue<T> = Pick<MotionValue<T>, 'get' | 'on'>;
 
@@ -51,12 +79,67 @@ describe('CameraScroll Component', () => {
 
   it('shows error message if manifest fails to load', async () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('Fetch failed')));
-    
+
     render(<CameraScroll />);
-    
+
     await waitFor(() => {
-      expect(screen.getByText('Falta generar el manifest de imágenes.')).toBeInTheDocument();
+      expect(screen.getByTestId('reduced-motion-hero')).toBeInTheDocument();
     });
+
+    expect(
+      screen.getByRole('heading', { level: 1, name: siteConfig.sale.productName }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByLabelText(`Contactar por WhatsApp sobre la ${siteConfig.sale.productName}`),
+    ).toHaveAttribute('href');
+    expect(screen.getByRole('link', { name: /Ver ficha técnica/i })).toHaveAttribute('href', '#specs');
+  });
+
+  it('renders static hero when manifest urls array is empty', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve([]),
+    }));
+
+    render(<CameraScroll />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('reduced-motion-hero')).toBeInTheDocument();
+    });
+
+    expect(
+      screen.getByRole('heading', { level: 1, name: siteConfig.sale.productName }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByLabelText(`Contactar por WhatsApp sobre la ${siteConfig.sale.productName}`),
+    ).toHaveAttribute('href');
+    expect(screen.getByRole('link', { name: /Ver ficha técnica/i })).toHaveAttribute('href', '#specs');
+  });
+
+  it('renders static hero when all frames fail to decode', async () => {
+    const manifest = ['/f1.jpg', '/f2.jpg'];
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve(manifest),
+    }));
+
+    vi.stubGlobal('Image', class extends MockImage {
+      constructor() { super({ fail: true }); }
+    });
+
+    render(<CameraScroll />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('reduced-motion-hero')).toBeInTheDocument();
+    });
+
+    expect(
+      screen.getByRole('heading', { level: 1, name: siteConfig.sale.productName }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByLabelText(`Contactar por WhatsApp sobre la ${siteConfig.sale.productName}`),
+    ).toHaveAttribute('href');
+    expect(screen.getByRole('link', { name: /Ver ficha técnica/i })).toHaveAttribute('href', '#specs');
   });
 
   it('shows progress bar while loading images', async () => {
@@ -66,11 +149,7 @@ describe('CameraScroll Component', () => {
       json: () => Promise.resolve(manifest),
     }));
 
-    vi.stubGlobal('Image', class {
-      onload = () => {};
-      set src(val: string) { setTimeout(() => this.onload(), 0); }
-      decoding = 'async';
-    });
+    vi.stubGlobal('Image', MockImage);
 
     render(<CameraScroll />);
 
@@ -86,11 +165,7 @@ describe('CameraScroll Component', () => {
       json: () => Promise.resolve(manifest),
     }));
 
-    vi.stubGlobal('Image', class {
-      onload = () => {};
-      set src(val: string) { setTimeout(() => this.onload(), 0); }
-      decoding = 'async';
-    });
+    vi.stubGlobal('Image', MockImage);
 
     render(<CameraScroll />);
 
@@ -114,13 +189,7 @@ describe('CameraScroll Component', () => {
       json: () => Promise.resolve(manifest),
     }));
 
-    vi.stubGlobal('Image', class {
-      onload = () => {};
-      set src(_value: string) {
-        setTimeout(() => this.onload(), 0);
-      }
-      decoding = 'async';
-    });
+    vi.stubGlobal('Image', MockImage);
 
     render(<CameraScroll />);
 
@@ -148,11 +217,7 @@ describe('CameraScroll Component', () => {
       ok: true,
       json: () => Promise.resolve(manifest),
     }));
-    vi.stubGlobal('Image', class { 
-      onload = () => {}; 
-      set src(s: string) { setTimeout(() => this.onload(), 0); }
-      decoding = 'async';
-    });
+    vi.stubGlobal('Image', MockImage);
 
     render(<CameraScroll />);
 
@@ -161,8 +226,14 @@ describe('CameraScroll Component', () => {
     });
 
     // Verify all narrative overlays are potentially visible
+    expect(siteConfig.sale.hero.claims).toEqual([
+      'Híbrida para ciudad y terrenos mixtos',
+      'Rápida, liviana y directa',
+      'Poco uso | como nueva',
+    ]);
     expect(screen.getByText(siteConfig.sale.hero.claims.join(' | '))).toBeInTheDocument();
     expect(screen.getByText(siteConfig.sale.hero.detailLines[3])).toBeInTheDocument();
+    expect(screen.getByText(siteConfig.sale.hero.detailLines[4])).toBeInTheDocument();
     expect(screen.getByText('Contactar por WhatsApp')).toBeInTheDocument();
     expect(
       screen.getByLabelText(`Contactar por WhatsApp sobre la ${siteConfig.sale.productName}`),
@@ -179,13 +250,7 @@ describe('CameraScroll Component', () => {
       json: () => Promise.resolve(manifest),
     }));
 
-    vi.stubGlobal('Image', class {
-      onload = () => {};
-      set src(_value: string) {
-        setTimeout(() => this.onload(), 0);
-      }
-      decoding = 'async';
-    });
+    vi.stubGlobal('Image', MockImage);
 
     render(<CameraScroll />);
 
@@ -206,13 +271,7 @@ describe('CameraScroll Component', () => {
       json: () => Promise.resolve(manifest),
     }));
 
-    vi.stubGlobal('Image', class {
-      onload = () => {};
-      set src(_value: string) {
-        setTimeout(() => this.onload(), 0);
-      }
-      decoding = 'async';
-    });
+    vi.stubGlobal('Image', MockImage);
 
     render(<CameraScroll />);
 

@@ -5,10 +5,12 @@ import { useScroll, useTransform, motion, useReducedMotion, useMotionValueEvent 
 import { whatsappUrl, siteConfig } from "@/src/config/site";
 import { navigateToSection } from "@/src/utils/sectionNavigation";
 
+const isUsableImage = (img: HTMLImageElement) => img.complete && img.naturalWidth > 0;
+
 export default function CameraScroll() {
   const [loadedImages, setLoadedImages] = useState<HTMLImageElement[]>([]);
   const [loadingProgress, setLoadingProgress] = useState(0);
-  const [manifestError, setManifestError] = useState(false);
+  const [useFallback, setUseFallback] = useState(false);
 
   // Cargar manifest y luego pre-cargar imágenes
   useEffect(() => {
@@ -52,26 +54,24 @@ export default function CameraScroll() {
           );
         }
         
-        setLoadedImages(imgCache.filter(Boolean));
+        const usable = imgCache.filter(isUsableImage);
+        if (usable.length === 0) {
+          setUseFallback(true);
+          return;
+        }
+        setLoadedImages(usable);
       } catch (err) {
-        console.error(err);
-        setManifestError(true);
+        console.warn("CameraScroll: falling back to static hero", { reason: err instanceof Error ? err.message : String(err) });
+        setUseFallback(true);
       }
-    }
+    };
     loadManifestAndImages();
   }, []);
 
-  if (manifestError) {
-    return (
-      <div className="h-screen w-full flex items-center justify-center bg-slate-50 text-slate-900">
-        <div className="text-center space-y-4">
-          <p className="text-xl font-bold">Aviso del Sistema</p>
-          <p>Falta generar el manifest de imágenes.</p>
-          <code className="bg-slate-200 p-2 rounded block">npm run predev</code>
-        </div>
-      </div>
-    );
+  if (useFallback) {
+    return <StaticHero />;
   }
+
 
   // Loader de progreso
   if (loadingProgress < 100) {
@@ -127,6 +127,44 @@ export function calculateImageDrawProps(canvasWidth: number, canvasHeight: numbe
 // WhatsApp URL generada desde siteConfig centralizado
 
 // Componente separado para que useScroll siempre encuentre su target ref montado en el DOM
+function StaticHero() {
+  const sale = siteConfig.sale;
+
+  return (
+    <section data-testid="reduced-motion-hero" className="w-full bg-[#F8FAFC] py-28 border-b border-slate-200">
+      <div className="max-w-4xl mx-auto px-6 text-center">
+        <h1 className="text-4xl md:text-6xl font-bold text-slate-900 tracking-tight mb-4">
+          {sale.productName}
+        </h1>
+        <p className="text-lg md:text-xl text-slate-600 mb-8 text-balance">
+          {sale.hero.claims.join(" | ")}
+        </p>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Contactar por WhatsApp sobre la ${sale.productName}`}
+            className="px-8 py-4 bg-[#A855F7] hover:bg-[#9333EA] text-white rounded-full font-semibold transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A855F7]"
+          >
+            Contactar por WhatsApp
+          </a>
+          <a
+            href="#specs"
+            onClick={(event) => {
+              event.preventDefault();
+              navigateToSection("specs", { updateHash: true, smooth: false, focusTarget: true });
+            }}
+            className="px-8 py-4 bg-white hover:bg-slate-50 text-slate-900 rounded-full font-semibold border border-slate-200 transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400"
+          >
+            Ver ficha técnica
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function CameraScrollContent({ loadedImages }: { loadedImages: HTMLImageElement[] }) {
   const sale = siteConfig.sale;
   const shouldReduceMotion = useReducedMotion();
@@ -215,39 +253,7 @@ function CameraScrollContent({ loadedImages }: { loadedImages: HTMLImageElement[
   };
 
   if (shouldReduceMotion) {
-    return (
-      <section data-testid="reduced-motion-hero" className="w-full bg-[#F8FAFC] py-28 border-b border-slate-200">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-slate-900 tracking-tight mb-4">
-            {sale.productName}
-          </h1>
-          <p className="text-lg md:text-xl text-slate-600 mb-8 text-balance">
-            {sale.hero.claims.join(" | ")}
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Contactar por WhatsApp sobre la ${sale.productName}`}
-              className="px-8 py-4 bg-[#A855F7] hover:bg-[#9333EA] text-white rounded-full font-semibold transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A855F7]"
-            >
-              Contactar por WhatsApp
-            </a>
-            <a
-              href="#specs"
-              onClick={(event) => {
-                event.preventDefault();
-                goToSection("specs");
-              }}
-              className="px-8 py-4 bg-white hover:bg-slate-50 text-slate-900 rounded-full font-semibold border border-slate-200 transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400"
-            >
-              Ver ficha técnica
-            </a>
-          </div>
-        </div>
-      </section>
-    );
+    return <StaticHero />;
   }
 
   return (
