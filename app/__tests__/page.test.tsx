@@ -3,12 +3,23 @@ import { describe, it, expect, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import Home from '../page';
 
+const finalGalleryTitle = 'Una bici así se entiende mejor cuando la mirás de cerca.';
+const finalGallerySubtitle = 'Deslizá, abrí las fotos y terminá de verla como corresponde.';
+
 // Keep heavy scrollytelling sections mocked.
 vi.mock('@/components/CameraScroll', () => ({ default: () => <div data-testid="camera-scroll" /> }));
 vi.mock('@/components/PurchaseConfig', () => ({ default: () => <section aria-label="purchase-config" /> }));
 vi.mock('@/components/TechSpecs', () => ({ default: () => <section id="specs" aria-label="tech-specs" /> }));
 vi.mock('@/components/TrustSection', () => ({ default: () => <section id="trust" aria-label="trust-section" /> }));
 vi.mock('@/components/Footer', () => ({ default: () => <footer aria-label="footer" /> }));
+vi.mock('@/components/FinalAspirationalGallery', () => ({
+  default: () => (
+    <section aria-label="final-gallery">
+      <h2>{finalGalleryTitle}</h2>
+      <p>{finalGallerySubtitle}</p>
+    </section>
+  ),
+}));
 
 vi.mock('@/hooks/useActiveSection', () => ({
   default: () => null,
@@ -96,5 +107,19 @@ describe('Home Page', () => {
 
     expect(window.location.hash).toBe('#main-content');
     expect(document.activeElement).toBe(main);
+  });
+
+  it('renders the final gallery copy between FAQ and Footer', () => {
+    render(<Home />);
+
+    const faqHeading = screen.getByRole('heading', { name: /Preguntas Frecuentes/i });
+    const galleryHeading = screen.getByRole('heading', { name: finalGalleryTitle });
+    const gallerySubtitle = screen.getByText(finalGallerySubtitle);
+    const footer = screen.getByRole('contentinfo', { name: /footer/i });
+
+    expect(galleryHeading).toBeInTheDocument();
+    expect(gallerySubtitle).toBeInTheDocument();
+    expect(faqHeading.compareDocumentPosition(galleryHeading) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(galleryHeading.compareDocumentPosition(footer) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 });

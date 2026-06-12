@@ -4,6 +4,7 @@ import PurchaseConfig from "@/components/PurchaseConfig";
 import TechSpecs from "@/components/TechSpecs";
 import TrustSection from "@/components/TrustSection";
 import FAQ from "@/components/FAQ";
+import FinalAspirationalGallery from "@/components/FinalAspirationalGallery";
 import Footer from "@/components/Footer";
 import SkipToMainLink from "@/components/SkipToMainLink";
 
@@ -17,6 +18,7 @@ export default function Home() {
       <TechSpecs />
       <TrustSection />
       <FAQ />
+      <FinalAspirationalGallery />
       <Footer />
     </main>
   );

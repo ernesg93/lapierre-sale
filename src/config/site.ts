@@ -16,6 +16,11 @@ type SaleConfig = {
     claims: string[];
     detailLines: string[];
   };
+  finalGallery: {
+    title: string;
+    subtitle: string;
+    images: GalleryImage[];
+  };
   footer: {
     heading: string;
     blurb: string;
@@ -40,6 +45,16 @@ type SaleConfig = {
   techSpecs: Array<{ label: string; value: string }>;
 };
 
+export type GalleryImage = {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  orientation: 'landscape' | 'portrait';
+};
+
+export const FINAL_GALLERY_MAX_IMAGES = 8;
+
 const specs: SaleConfig['specs'] = {
   frame: 'Carbono, talle M (17")',
   brakes: 'Shimano hidráulicos',
@@ -48,6 +63,73 @@ const specs: SaleConfig['specs'] = {
   condition: 'Como nueva',
   usage: 'Poco uso. Horquilla rígida de aluminio ultraliviana.',
 };
+
+const finalGalleryImages: GalleryImage[] = [
+  {
+    src: '/gallery/IMG-1.webp',
+    alt: 'Vista completa de la Lapierre Pro Race.',
+    width: 1020,
+    height: 768,
+    orientation: 'landscape',
+  },
+  {
+    src: '/gallery/IMG-2.webp',
+    alt: 'Perfil vertical de la Lapierre Pro Race.',
+    width: 768,
+    height: 1020,
+    orientation: 'portrait',
+  },
+  {
+    src: '/gallery/IMG-3.webp',
+    alt: 'Detalle vertical de la Lapierre Pro Race.',
+    width: 768,
+    height: 1020,
+    orientation: 'portrait',
+  },
+  {
+    src: '/gallery/IMG-4.webp',
+    alt: 'Vista vertical de la Lapierre Pro Race desde otro ángulo.',
+    width: 768,
+    height: 1020,
+    orientation: 'portrait',
+  },
+  {
+    src: '/gallery/IMG-5.webp',
+    alt: 'Otro perfil vertical de la Lapierre Pro Race.',
+    width: 768,
+    height: 1020,
+    orientation: 'portrait',
+  },
+  {
+    src: '/gallery/IMG-6.webp',
+    alt: 'Detalle visual de la Lapierre Pro Race en formato vertical.',
+    width: 768,
+    height: 1020,
+    orientation: 'portrait',
+  },
+  {
+    src: '/gallery/IMG-7.webp',
+    alt: 'Vista aspiracional vertical de la Lapierre Pro Race.',
+    width: 768,
+    height: 1020,
+    orientation: 'portrait',
+  },
+  {
+    src: '/gallery/IMG-8.webp',
+    alt: 'Último ángulo vertical de la Lapierre Pro Race.',
+    width: 768,
+    height: 1020,
+    orientation: 'portrait',
+  },
+];
+
+function createFinalGallery(images: GalleryImage[]): SaleConfig['finalGallery'] {
+  return {
+    title: 'Una bici así se entiende mejor cuando la mirás de cerca.',
+    subtitle: 'Deslizá, abrí las fotos y terminá de verla como corresponde.',
+    images: images.slice(0, FINAL_GALLERY_MAX_IMAGES),
+  };
+}
 
 const sale: SaleConfig = {
   productName: 'Lapierre Pro Race',
@@ -69,6 +151,7 @@ const sale: SaleConfig = {
       'Está como nueva, con poco uso y publicada con información clara.',
     ],
   },
+  finalGallery: createFinalGallery(finalGalleryImages),
   footer: {
     heading: 'Lapierre Pro Race',
     blurb: 'Una sola Lapierre Pro Race, poco uso, como nueva y lista para seguir rodando.',

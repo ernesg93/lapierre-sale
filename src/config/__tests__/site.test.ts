@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  FINAL_GALLERY_MAX_IMAGES,
   buildPurchaseMessage,
   buildPurchaseWhatsAppUrl,
   buildWhatsAppUrl,
@@ -88,5 +89,26 @@ describe('site config whatsapp helpers', () => {
     expect(buildPurchaseWhatsAppUrl(option.title)).toBe(buildWhatsAppUrl(message));
     expect(message).toContain('Lapierre Pro Race');
     expect(message).not.toMatch(/pack|accesorios|usd/i);
+  });
+
+  it('exposes the final gallery copy and keeps the configured set within the supported cap', () => {
+    expect(siteConfig.sale.finalGallery.title).toBe('Una bici así se entiende mejor cuando la mirás de cerca.');
+    expect(siteConfig.sale.finalGallery.subtitle).toBe('Deslizá, abrí las fotos y terminá de verla como corresponde.');
+    expect(siteConfig.sale.finalGallery.images.length).toBeGreaterThanOrEqual(1);
+    expect(siteConfig.sale.finalGallery.images.length).toBeLessThanOrEqual(FINAL_GALLERY_MAX_IMAGES);
+  });
+
+  it('defines final gallery images with the expected render metadata contract', () => {
+    expect(siteConfig.sale.finalGallery.images).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          src: expect.any(String),
+          alt: expect.any(String),
+          width: expect.any(Number),
+          height: expect.any(Number),
+          orientation: expect.stringMatching(/^(landscape|portrait)$/),
+        }),
+      ]),
+    );
   });
 });
