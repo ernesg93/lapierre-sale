@@ -5,7 +5,6 @@
 
 type SaleConfig = {
   productName: string;
-  price: string;
   metadata: {
     title: string;
     description: string;
@@ -29,7 +28,6 @@ type SaleConfig = {
   purchaseOptions: Array<{
     id: string;
     title: string;
-    price: string;
     description: string;
     highlight: boolean;
     badge?: string;
@@ -133,11 +131,10 @@ function createFinalGallery(images: GalleryImage[]): SaleConfig['finalGallery'] 
 
 const sale: SaleConfig = {
   productName: 'Lapierre Pro Race',
-  price: '$ 850',
   metadata: {
-    title: 'Lapierre Pro Race | Bici híbrida $ 850',
+    title: 'Lapierre Pro Race | Bici híbrida de carbono',
     description:
-      'Lapierre Pro Race en venta por $ 850: cuadro de carbono, rápida y liviana para ciudad y terrenos mixtos. Poco uso, como nueva y sin vueltas.',
+      'Lapierre Pro Race en venta: cuadro de carbono, rápida y liviana para ciudad y terrenos mixtos. Poco uso, como nueva y sin vueltas.',
     ogImage: '/frames/frame-01.webp',
   },
   hero: {
@@ -161,14 +158,12 @@ const sale: SaleConfig = {
     {
       id: 'visit',
       title: 'Quiero verla en persona',
-      price: 'FREE',
       description: 'Coordinamos una visita para verla con calma y confirmar si es la bici indicada para vos.',
       highlight: false,
     },
     {
       id: 'reserve',
-      title: 'Quiero reservar esta bici',
-      price: '$ 850',
+      title: 'Quiero hablar sobre esta bici',
       badge: 'Directo',
       description:
         'Si ya te cierra, escribime y avanzamos por WhatsApp con el siguiente paso sobre esta misma Lapierre Pro Race.',
@@ -177,7 +172,6 @@ const sale: SaleConfig = {
     {
       id: 'ask',
       title: 'Necesito hacer una consulta',
-      price: 'FREE',
       description: 'Si querés confirmar talle, uso o cómo se siente en distintos terrenos, te respondo directo por WhatsApp.',
       highlight: false,
     },
@@ -201,9 +195,6 @@ export const siteConfig = {
   whatsappNumber: '5356793586',
 
   sale,
-
-  /** Precio de venta para mostrar en el header (alias temporal) */
-  price: sale.price,
 
   /** Mensaje pre-cargado en WhatsApp al hacer click */
   whatsappMessage: `Hola, me interesa la ${sale.productName}.`,

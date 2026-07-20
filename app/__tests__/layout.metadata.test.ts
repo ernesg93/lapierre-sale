@@ -10,10 +10,24 @@ import { siteConfig } from '@/src/config/site';
 
 describe('layout metadata', () => {
   it('uses centralized sale title and description for SEO/OG/Twitter', () => {
-    expect(siteConfig.sale.metadata.title).toBe('Lapierre Pro Race | Bici híbrida $ 850');
+    expect(siteConfig.sale.metadata.title).toBe(
+      'Lapierre Pro Race | Bici híbrida de carbono',
+    );
     expect(siteConfig.sale.metadata.description).toContain('Lapierre Pro Race');
-    expect(siteConfig.sale.metadata.description).toContain('$ 850');
     expect(siteConfig.sale.metadata.description).toContain('como nueva');
+
+    const projectedCopy = [
+      metadata.title,
+      metadata.description,
+      metadata.openGraph?.title,
+      metadata.openGraph?.description,
+      metadata.twitter?.title,
+      metadata.twitter?.description,
+    ].join(' ');
+
+    expect(projectedCopy).not.toMatch(
+      /\$|\b(?:usd|eur|free)\b|sin costo|reserv(?:a|ar|ación)/i,
+    );
 
     expect(metadata.title).toBe(siteConfig.sale.metadata.title);
     expect(metadata.description).toBe(siteConfig.sale.metadata.description);

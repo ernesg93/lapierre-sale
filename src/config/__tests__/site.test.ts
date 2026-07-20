@@ -12,9 +12,9 @@ import {
 describe('site config whatsapp helpers', () => {
   it('exposes a centralized sale contract and root aliases', () => {
     expect(siteConfig.sale.productName).toBe('Lapierre Pro Race');
-    expect(siteConfig.sale.price).toBe('$ 850');
     expect(siteConfig.sale.productName).toBe(siteConfig.name);
-    expect(siteConfig.sale.price).toBe(siteConfig.price);
+    expect('price' in siteConfig.sale).toBe(false);
+    expect('price' in siteConfig).toBe(false);
 
     expect(siteConfig.sale.metadata.title).toBe(siteConfig.title);
     expect(siteConfig.sale.metadata.description).toBe(siteConfig.description);
@@ -45,11 +45,32 @@ describe('site config whatsapp helpers', () => {
     expect(siteConfig.sale.hero.detailLines.at(-1)).toBe(
       'Está como nueva, con poco uso y publicada con información clara.',
     );
-    expect(siteConfig.sale.purchaseOptions.map((option) => option.price)).toEqual([
-      'FREE',
-      '$ 850',
-      'FREE',
+    expect(siteConfig.sale.purchaseOptions).toHaveLength(3);
+    siteConfig.sale.purchaseOptions.forEach((option) => {
+      expect('price' in option).toBe(false);
+    });
+  });
+
+  it('keeps metadata and purchase options free of price-adjacent copy', () => {
+    const publicCopy = [
+      siteConfig.sale.metadata.title,
+      siteConfig.sale.metadata.description,
+      ...siteConfig.sale.purchaseOptions.flatMap((option) => [
+        option.title,
+        option.description,
+        option.badge ?? '',
+      ]),
+    ].join(' ');
+
+    expect(siteConfig.sale.metadata.title).toBe(
+      'Lapierre Pro Race | Bici híbrida de carbono',
+    );
+    expect(siteConfig.sale.purchaseOptions.map((option) => option.title)).toEqual([
+      'Quiero verla en persona',
+      'Quiero hablar sobre esta bici',
+      'Necesito hacer una consulta',
     ]);
+    expect(publicCopy).not.toMatch(/\$|\b(?:usd|eur|free)\b|sin costo|reserv(?:a|ar|ación)/i);
   });
 
   it('builds whatsapp url with default configured message', () => {
@@ -79,7 +100,7 @@ describe('site config whatsapp helpers', () => {
     const option = siteConfig.sale.purchaseOptions[0];
 
     expect(buildPurchaseMessage(option.title)).toBe(`Hola, vi la ${siteConfig.sale.productName} en la web y me interesa avanzar por: ${option.title}.`);
-    expect(buildPurchaseMessage(option.title)).not.toContain(siteConfig.sale.price);
+    expect(buildPurchaseMessage(option.title)).not.toMatch(/\$|\b(?:usd|eur|free)\b/i);
   });
 
   it('builds purchase whatsapp urls from centralized sale message composition', () => {

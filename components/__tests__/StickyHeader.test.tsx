@@ -13,6 +13,23 @@ vi.mock('../../hooks/useActiveSection', () => ({
   default: vi.fn(),
 }));
 
+vi.mock('@/src/config/site', async () => {
+  const actual = await vi.importActual<typeof import('@/src/config/site')>(
+    '@/src/config/site',
+  );
+
+  return {
+    ...actual,
+    siteConfig: {
+      ...actual.siteConfig,
+      sale: {
+        ...actual.siteConfig.sale,
+        price: '$ 850',
+      },
+    },
+  };
+});
+
 // Mocking framer-motion
 vi.mock('framer-motion', async () => {
   const actual = await vi.importActual('framer-motion');
@@ -198,7 +215,7 @@ describe('StickyHeader Component', () => {
     expect(screen.getByTestId('progress-bar')).toHaveStyle({ transform: 'scaleX(0.2)' });
   });
 
-  it('shows product and CTA when scrolling deep', () => {
+  it('shows product identity and an accessible Contact CTA without a price when scrolling deep', () => {
     vi.mocked(useScroll).mockReturnValue({
       scrollY: createMockMotionValue(200),
       scrollYProgress: createMockMotionValue(0.2),
@@ -206,14 +223,19 @@ describe('StickyHeader Component', () => {
 
     render(<StickyHeader />);
     expect(screen.getByText(siteConfig.sale.productName)).toBeInTheDocument();
-    expect(screen.getByText('$ 850')).toBeInTheDocument();
+    expect(screen.queryByText(/\$\s*850|\bfree\b/i)).not.toBeInTheDocument();
 
     const cta = screen.getByRole('link', { name: /Contactar/i });
     expect(cta).toHaveStyle({ opacity: '1', scale: '1' });
+    expect(cta).toHaveAttribute('href', expect.stringContaining('https://wa.me/'));
+    expect(cta).toHaveAttribute('target', '_blank');
+    expect(cta).toHaveAttribute('rel', 'noopener noreferrer');
   });
 
   it('keeps hidden CTA out of keyboard focus when not visible', () => {
     render(<StickyHeader />);
+    expect(screen.getByText(siteConfig.sale.productName)).toBeInTheDocument();
+    expect(screen.queryByText(/\$\s*850|\bfree\b/i)).not.toBeInTheDocument();
     const cta = screen.getByText('Contactar').closest('a') as HTMLAnchorElement;
     expect(cta).toBeInTheDocument();
     expect(cta).toHaveAttribute('tabindex', '-1');

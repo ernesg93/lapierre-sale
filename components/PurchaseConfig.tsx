@@ -10,7 +10,7 @@ export default function PurchaseConfig() {
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-4 tracking-tight">Cómo avanzar con esta bici</h2>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-            Tres formas directas de hablar por la misma Lapierre Pro Race, con reserva directa o consultas sin costo.
+            Tres formas directas de hablar por la misma Lapierre Pro Race y resolver tus dudas por WhatsApp.
           </p>
         </div>
 
@@ -34,7 +34,6 @@ export default function PurchaseConfig() {
               
               <div className="mb-8 flex-grow">
                 <h3 className="text-2xl font-bold text-slate-900 mb-2">{opt.title}</h3>
-                <div className="text-3xl font-light text-slate-800 mb-4">{opt.price}</div>
                 <p className="text-slate-600 leading-relaxed">{opt.description}</p>
               </div>
               

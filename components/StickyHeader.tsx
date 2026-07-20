@@ -60,14 +60,6 @@ export default function StickyHeader() {
             <span className="text-slate-900 font-bold tracking-tight text-sm sm:text-lg whitespace-nowrap">
               {sale.productName}
             </span>
-            
-            {/* Precio dinámico (aparece al scrollear) */}
-            <motion.span 
-              style={{ opacity: showCTA }}
-              className="hidden sm:inline-block text-[#A855F7] font-bold text-sm bg-[#A855F7]/10 px-2 py-0.5 rounded-lg border border-[#A855F7]/20"
-            >
-              {sale.price}
-            </motion.span>
           </div>
           
           <div className="flex items-center gap-4 sm:gap-8">
